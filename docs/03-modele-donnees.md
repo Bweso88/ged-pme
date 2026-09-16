@@ -1,4 +1,4 @@
-# GED PME — Schéma de base de données et diagramme des relations
+# YOSEFA — Schéma de base de données et diagramme des relations
 
 > Livrables couverts : 7. Schéma de base de données — 8. Diagramme des relations
 

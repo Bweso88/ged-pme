@@ -1,4 +1,4 @@
-# GED PME — Liste des écrans et parcours utilisateur
+# YOSEFA — Liste des écrans et parcours utilisateur
 
 > Livrables couverts : 15. Liste des écrans — 16. Parcours utilisateur
 

@@ -1,4 +1,4 @@
-# GED PME — Modèle de sécurité, matrice des permissions, workflow documentaire, politique d'archivage
+# YOSEFA — Modèle de sécurité, matrice des permissions, workflow documentaire, politique d'archivage
 
 > Livrables couverts : 11. Modèle de sécurité — 12. Matrice rôles/permissions — 13. Workflow documentaire — 14. Politique d'archivage
 

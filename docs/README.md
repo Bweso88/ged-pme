@@ -1,4 +1,4 @@
-# GED PME — Documentation produit & architecture
+# YOSEFA — Documentation produit & architecture
 
 > **Vous voulez juste installer et lancer le projet, en particulier si vous découvrez Laravel ?**
 > Commencez par [00-installation-debutant.md](./00-installation-debutant.md). Les documents

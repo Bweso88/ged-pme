@@ -1,4 +1,4 @@
-# GED PME — Stratégie de sauvegarde, plan de développement, plan de tests
+# YOSEFA — Stratégie de sauvegarde, plan de développement, plan de tests
 
 > Livrables couverts : 18. Stratégie de sauvegarde — 19. Plan de développement — 20. Plan de tests
 

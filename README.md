@@ -1,4 +1,4 @@
-# GED PME
+# YOSEFA
 
 Plateforme de Gestion Électronique des Documents (GED) et d'archivage pour PME, cabinets et
 associations — application Laravel MVP. Voir [`docs/`](./docs) pour l'architecture complète

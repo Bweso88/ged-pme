@@ -1,4 +1,4 @@
-# GED PME — Architecture technique, multi-tenant, API, stockage, déploiement
+# YOSEFA — Architecture technique, multi-tenant, API, stockage, déploiement
 
 > Livrables couverts : 5. Architecture technique — 6. Architecture multi-tenant — 9. Architecture API — 10. Architecture stockage — 17. Architecture de déploiement
 

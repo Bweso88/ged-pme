@@ -1,4 +1,4 @@
-# GED PME — Vision produit, personas, cas d'usage et périmètre fonctionnel
+# YOSEFA — Vision produit, personas, cas d'usage et périmètre fonctionnel
 
 > Livrables couverts : 1. Vision produit — 2. Personas — 3. Cas d'utilisation — 4. Fonctionnalités MVP/V2/V3
 
@@ -8,7 +8,7 @@
 
 ### 1.1 Positionnement
 
-**GED PME** est une plateforme complète de gestion et d'archivage des documents de l'entreprise, pensée pour les PME, administrations, cabinets et associations qui n'ont ni le budget ni les équipes IT des grands comptes, mais qui ont les mêmes besoins fonctionnels de fond : centraliser, sécuriser, retrouver, faire circuler et conserver leurs documents dans le temps.
+**YOSEFA** est une plateforme complète de gestion et d'archivage des documents de l'entreprise, pensée pour les PME, administrations, cabinets et associations qui n'ont ni le budget ni les équipes IT des grands comptes, mais qui ont les mêmes besoins fonctionnels de fond : centraliser, sécuriser, retrouver, faire circuler et conserver leurs documents dans le temps.
 
 Ce n'est **pas** un simple espace de stockage de fichiers (type Google Drive/OneDrive). La différence tient à quatre piliers :
 
@@ -19,7 +19,7 @@ Ce n'est **pas** un simple espace de stockage de fichiers (type Google Drive/One
 
 ### 1.2 Proposition de valeur
 
-| Douleur PME | Réponse GED PME |
+| Douleur PME | Réponse YOSEFA |
 |---|---|
 | Documents dispersés (email, disque partagé, papier) | Espace documentaire centralisé, structuré par service |
 | "Où est la dernière version du contrat ?" | Versioning strict + recherche avancée + OCR |
@@ -38,7 +38,7 @@ Ce n'est **pas** un simple espace de stockage de fichiers (type Google Drive/One
 ## 2. Personas
 
 ### 2.1 Super Administrateur (éditeur SaaS)
-- **Qui** : l'éditeur de GED PME (vous), gère la plateforme multi-tenant.
+- **Qui** : l'éditeur de YOSEFA (vous), gère la plateforme multi-tenant.
 - **Besoins** : créer/suspendre des entreprises clientes, superviser l'usage (stockage, utilisateurs), gérer la facturation, supporter les clients.
 - **Ne touche jamais** aux documents métier des entreprises clientes.
 
