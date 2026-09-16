@@ -11,6 +11,10 @@ Tesseract (OCR, optionnel).
 
 ## Installation locale
 
+**Première fois avec Laravel ?** Suivez [`docs/00-installation-debutant.md`](./docs/00-installation-debutant.md) — un guide pas à pas qui explique chaque commande.
+
+Pour un aller-retour rapide si vous connaissez déjà Laravel :
+
 ```bash
 composer install
 cp .env.example .env

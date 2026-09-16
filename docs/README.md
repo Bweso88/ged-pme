@@ -1,5 +1,9 @@
 # GED PME — Documentation produit & architecture
 
+> **Vous voulez juste installer et lancer le projet, en particulier si vous découvrez Laravel ?**
+> Commencez par [00-installation-debutant.md](./00-installation-debutant.md). Les documents
+> ci-dessous sont l'architecture et les décisions produit, pas un guide d'installation.
+
 Ce dossier contient les 20 livrables demandés avant l'implémentation, regroupés en 6 documents thématiques :
 
 | Fichier | Livrables couverts |
