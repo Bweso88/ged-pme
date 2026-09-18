@@ -72,7 +72,103 @@ brew services start postgresql
 brew services start redis
 ```
 
-**Windows** : le plus simple est d'utiliser [Laragon](https://laragon.org/) ou [WSL2](https://learn.microsoft.com/fr-fr/windows/wsl/install) avec les commandes Ubuntu ci-dessus — la plupart des développeurs Laravel sous Windows passent par WSL2 pour éviter les problèmes de chemins/permissions.
+**Windows :** voir la section dédiée ci-dessous — l'installation directe sous Windows (sans WSL2)
+pose régulièrement des problèmes de chemins et de permissions avec Composer et PostgreSQL.
+
+---
+
+## 2 bis. Installation sous Windows (WSL2)
+
+La méthode recommandée n'installe **rien directement dans Windows** : elle utilise WSL2, un vrai
+Linux (Ubuntu) qui tourne à l'intérieur de Windows, dans lequel vous exécutez exactement les
+commandes Ubuntu/Debian de ce guide. C'est la façon la plus fiable de faire tourner un projet
+Laravel sous Windows — la quasi-totalité des tutoriels Laravel supposent Linux/macOS.
+
+### Étape 1 — Installer WSL2
+
+Ouvrez **PowerShell en administrateur** (clic droit → "Exécuter en tant qu'administrateur") et
+tapez :
+
+```powershell
+wsl --install
+```
+
+Cela installe WSL2 et une distribution Ubuntu par défaut. Redémarrez l'ordinateur si Windows le
+demande. Au premier lancement d'Ubuntu (menu Démarrer → "Ubuntu"), on vous demande de créer un
+nom d'utilisateur et un mot de passe **Unix** (rien à voir avec votre compte Windows) — choisissez
+ce que vous voulez, vous vous en servirez pour `sudo`.
+
+> Si `wsl --install` échoue en disant que la virtualisation n'est pas activée, il faut l'activer
+> dans le BIOS/UEFI de la machine (option souvent nommée "Intel VT-x" ou "AMD-V") — cherchez
+> "activer virtualisation [nom de votre PC]" si besoin.
+
+### Étape 2 — Installer les outils dans Ubuntu
+
+Ouvrez le terminal **Ubuntu** (pas PowerShell) depuis le menu Démarrer, et lancez :
+
+```bash
+sudo apt update
+sudo apt install -y php8.3 php8.3-cli php8.3-pgsql php8.3-mbstring php8.3-xml \
+  php8.3-curl php8.3-zip php8.3-bcmath php8.3-gd unzip postgresql redis-server
+
+# Composer
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+
+# Node.js 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Démarrer les services
+sudo service postgresql start
+sudo service redis-server start
+```
+
+Vérifiez ensuite avec le tableau de la section 2 (`php -v`, `composer --version`, etc.) — tout
+doit répondre correctement, **depuis le terminal Ubuntu**.
+
+### Étape 3 — Récupérer le projet et l'éditer
+
+Travaillez avec les fichiers **à l'intérieur du système de fichiers Linux** (pas dans
+`/mnt/c/...`) pour éviter des lenteurs et des soucis de permissions — par exemple sous
+`~/projets/` :
+
+```bash
+mkdir -p ~/projets && cd ~/projets
+# copiez ou clonez le projet ici, puis :
+cd Scolia/ged-pme
+```
+
+Pour éditer le code avec VS Code sous Windows tout en travaillant dans WSL : installez
+l'extension **"WSL"** de Microsoft dans VS Code, puis depuis le terminal Ubuntu, dans le dossier
+du projet :
+
+```bash
+code .
+```
+
+VS Code s'ouvre alors connecté directement au système de fichiers Linux (indiqué en bas à gauche
+de la fenêtre : "WSL: Ubuntu").
+
+### Étape 4 — Continuer normalement
+
+À partir d'ici, suivez la suite de ce guide (sections 3 à 8) **dans le terminal Ubuntu** — toutes
+les commandes (`composer install`, `php artisan migrate`, `php artisan serve`, etc.) sont
+identiques à celles données pour Linux. Une fois `php artisan serve` lancé, ouvrez
+`http://127.0.0.1:8000` dans votre navigateur Windows normal (Chrome, Edge...) : WSL2 rend les
+ports automatiquement accessibles depuis Windows.
+
+### Alternative sans WSL2 : Laragon
+
+Si vous préférez une installation 100 % Windows sans ligne de commande Linux,
+[Laragon](https://laragon.org/) fournit PHP, Composer et Node.js en quelques clics. Il n'inclut
+en revanche pas PostgreSQL par défaut (seulement MySQL) : il faudrait installer PostgreSQL
+séparément via [l'installeur officiel Windows](https://www.postgresql.org/download/windows/) et
+faire de même pour Redis (moins direct sous Windows — voir
+[Memurai](https://www.memurai.com/) comme alternative compatible Redis pour Windows, ou
+[Redis via WSL2](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-windows/)
+juste pour ce composant). **WSL2 reste la voie la plus simple** car elle évite de mélanger deux
+écosystèmes différents.
 
 ---
 
