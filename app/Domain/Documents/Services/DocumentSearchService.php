@@ -7,7 +7,6 @@ namespace App\Domain\Documents\Services;
 use App\Models\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Recherche avancée (voir doc ged-pme/docs/01-vision-produit.md, §8) : filtres combinés sur

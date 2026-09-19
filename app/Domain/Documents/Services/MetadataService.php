@@ -7,6 +7,7 @@ namespace App\Domain\Documents\Services;
 use App\Models\Document;
 use App\Models\DocumentMetadataSuggestion;
 use App\Models\MetadataField;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -41,8 +42,8 @@ class MetadataService
         }
     }
 
-    /** @return \Illuminate\Support\Collection<int, MetadataField> */
-    public function fieldsFor(Document $document): \Illuminate\Support\Collection
+    /** @return Collection<int, MetadataField> */
+    public function fieldsFor(Document $document): Collection
     {
         return MetadataField::query()
             ->where(function ($query) use ($document) {
@@ -62,8 +63,8 @@ class MetadataService
             ->all();
     }
 
-    /** @return \Illuminate\Support\Collection<int, DocumentMetadataSuggestion> */
-    public function pendingSuggestionsFor(Document $document): \Illuminate\Support\Collection
+    /** @return Collection<int, DocumentMetadataSuggestion> */
+    public function pendingSuggestionsFor(Document $document): Collection
     {
         return DocumentMetadataSuggestion::query()
             ->with('metadataField')

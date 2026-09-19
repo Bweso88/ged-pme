@@ -10,6 +10,9 @@
         </div>
         <div class="flex gap-2">
             <button wire:click="download" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Télécharger</button>
+            @if ($canEditOnline)
+                <a href="{{ route('documents.edit-online', $document) }}" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Éditer en ligne</a>
+            @endif
             @if ($document->statut === 'brouillon')
                 <button wire:click="submitWorkflow" class="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white hover:bg-slate-700">Soumettre au workflow</button>
             @endif

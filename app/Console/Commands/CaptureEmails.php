@@ -11,7 +11,7 @@ class CaptureEmails extends Command
 {
     protected $signature = 'ged:capture-emails';
 
-    protected $description = "Dépose dans YOSEFA les pièces jointes des emails non lus de la boîte de capture configurée (GED_EMAIL_CAPTURE_*)";
+    protected $description = 'Dépose dans YOSEFA les pièces jointes des emails non lus de la boîte de capture configurée (GED_EMAIL_CAPTURE_*)';
 
     public function handle(): int
     {

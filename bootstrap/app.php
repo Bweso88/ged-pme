@@ -29,7 +29,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Le WebDAV s'authentifie lui-même (Basic Auth, voir App\Domain\WebDav\AuthBackend) :
         // un client réseau (Windows/Mac) n'envoie pas de jeton CSRF sur ses requêtes PUT/DELETE.
-        $middleware->validateCsrfTokens(except: ['webdav/*']);
+        // Le rappel OnlyOffice (POST serveur à serveur, authentifié par URL signée + JWT
+        // optionnel) n'en envoie pas non plus.
+        $middleware->validateCsrfTokens(except: ['webdav/*', 'onlyoffice/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

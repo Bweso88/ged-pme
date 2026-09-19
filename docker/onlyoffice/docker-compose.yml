@@ -1,0 +1,35 @@
+# Document Server OnlyOffice — édition Office en ligne pour YOSEFA.
+#
+# Ce service est indépendant du reste du déploiement YOSEFA (pas encore dockerisé à ce stade,
+# voir docs/00-installation-debutant.md) : il peut être lancé sur le même serveur ou sur un
+# serveur séparé, tant que YOSEFA peut l'atteindre en HTTPS depuis les navigateurs des
+# utilisateurs, et réciproquement (voir GED_ONLYOFFICE_INTERNAL_APP_URL si les deux ne
+# partagent pas le même nom d'hôte).
+#
+# Démarrage : docker compose -f docker/onlyoffice/docker-compose.yml up -d
+#
+# Documentation officielle : https://helpcenter.onlyoffice.com/installation/docs-community-install-docker.aspx
+services:
+  onlyoffice-documentserver:
+    image: onlyoffice/documentserver:8.1
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      # Signe les configurations d'éditeur et vérifie les rappels : DOIT correspondre à
+      # GED_ONLYOFFICE_JWT_SECRET côté YOSEFA. Ne jamais désactiver (JWT_ENABLED=false) en
+      # production : sans ça, n'importe qui connaissant l'URL du Document Server pourrait
+      # forger une configuration pointant vers un autre document.
+      - JWT_ENABLED=true
+      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET:?Définir ONLYOFFICE_JWT_SECRET avant de démarrer}
+    volumes:
+      - onlyoffice_data:/var/www/onlyoffice/Data
+      - onlyoffice_logs:/var/log/onlyoffice
+      - onlyoffice_lib:/var/lib/onlyoffice
+      - onlyoffice_db:/var/lib/postgresql
+
+volumes:
+  onlyoffice_data:
+  onlyoffice_logs:
+  onlyoffice_lib:
+  onlyoffice_db:

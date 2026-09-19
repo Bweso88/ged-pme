@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Feature\Workflow;
 
 use App\Domain\Workflow\Services\WorkflowService;
+use App\Models\Company;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Role;
+use App\Models\User;
 use App\Models\WorkflowDefinition;
 use App\Models\WorkflowStep;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,7 +22,7 @@ class WorkflowTest extends TestCase
 {
     use InteractsWithTenants, RefreshDatabase;
 
-    private function makeDocument(\App\Models\Company $company, \App\Models\User $author): Document
+    private function makeDocument(Company $company, User $author): Document
     {
         $folder = Folder::query()->create(['nom' => 'Achats', 'created_by' => $author->id]);
 

@@ -26,7 +26,7 @@ class SignatureService
     }
 
     /**
-     * @param Signataire[] $signataires
+     * @param  Signataire[]  $signataires
      *
      * @throws SignatureProviderException
      */

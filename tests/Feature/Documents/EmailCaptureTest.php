@@ -10,6 +10,7 @@ use App\Domain\Documents\EmailCapture\InboundEmail;
 use App\Domain\Documents\Services\EmailCaptureService;
 use App\Models\Folder;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -35,7 +36,8 @@ class EmailCaptureTest extends TestCase
             public bool $processed = false;
         };
 
-        $this->app->bind(EmailInbox::class, fn () => new class($spy) implements EmailInbox {
+        $this->app->bind(EmailInbox::class, fn () => new class($spy) implements EmailInbox
+        {
             public function __construct(private object $spy) {}
 
             public function fetchUnseen(): iterable
@@ -43,7 +45,9 @@ class EmailCaptureTest extends TestCase
                 yield new InboundEmail(
                     'Facture fournisseur',
                     [new CapturedAttachment('facture.txt', 'contenu de la facture')],
-                    function () { $this->spy->processed = true; },
+                    function () {
+                        $this->spy->processed = true;
+                    },
                 );
             }
         });
@@ -59,7 +63,8 @@ class EmailCaptureTest extends TestCase
     {
         [$folder] = $this->configureCapture();
 
-        $this->app->bind(EmailInbox::class, fn () => new class implements EmailInbox {
+        $this->app->bind(EmailInbox::class, fn () => new class implements EmailInbox
+        {
             public function fetchUnseen(): iterable
             {
                 yield new InboundEmail('Suspect', [
@@ -85,7 +90,7 @@ class EmailCaptureTest extends TestCase
         app(EmailCaptureService::class)->capture();
     }
 
-    /** @return array{0: Folder, 1: \App\Models\User} */
+    /** @return array{0: Folder, 1: User} */
     private function configureCapture(): array
     {
         $this->seedCatalog();

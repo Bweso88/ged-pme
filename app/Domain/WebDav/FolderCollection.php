@@ -7,6 +7,7 @@ namespace App\Domain\WebDav;
 use App\Models\Folder;
 use Illuminate\Support\Facades\Gate;
 use Sabre\DAV\Collection;
+use Sabre\DAV\File;
 
 /**
  * Nœud WebDAV représentant un dossier YOSEFA (ou la racine si $folder est null). Respecte les
@@ -26,7 +27,7 @@ class FolderCollection extends Collection
         return $this->name;
     }
 
-    /** @return array<int, Collection|\Sabre\DAV\File> */
+    /** @return array<int, Collection|File> */
     public function getChildren(): array
     {
         $user = $this->context->user();

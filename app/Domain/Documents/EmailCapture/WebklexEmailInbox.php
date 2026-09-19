@@ -17,7 +17,7 @@ class WebklexEmailInbox implements EmailInbox
 
     public function fetchUnseen(): iterable
     {
-        $client = (new ClientManager())->make([
+        $client = (new ClientManager)->make([
             'host' => $this->config['host'],
             'port' => $this->config['port'],
             'encryption' => $this->config['encryption'],

@@ -8,6 +8,7 @@ use App\Models\Document;
 use App\Models\DocumentMetadataSuggestion;
 use App\Models\DocumentVersion;
 use App\Models\MetadataField;
+use Illuminate\Support\Collection;
 
 /**
  * Propose des valeurs de métadonnées (numéro de facture, montant, date...) à partir du texte
@@ -37,8 +38,8 @@ class MetadataExtractionService
         }
     }
 
-    /** @return \Illuminate\Support\Collection<int, MetadataField> */
-    private function extractableFieldsFor(Document $document): \Illuminate\Support\Collection
+    /** @return Collection<int, MetadataField> */
+    private function extractableFieldsFor(Document $document): Collection
     {
         return MetadataField::query()
             ->whereNotNull('extraction_pattern')

@@ -36,7 +36,7 @@ class EmailCaptureService
 
         if ($folder === null || $uploader === null) {
             throw new RuntimeException(
-                "Capture email mal configurée : GED_EMAIL_CAPTURE_TARGET_FOLDER_ID ou GED_EMAIL_CAPTURE_UPLOADER_USER_ID ne correspond à aucun dossier/utilisateur.",
+                'Capture email mal configurée : GED_EMAIL_CAPTURE_TARGET_FOLDER_ID ou GED_EMAIL_CAPTURE_UPLOADER_USER_ID ne correspond à aucun dossier/utilisateur.',
             );
         }
 

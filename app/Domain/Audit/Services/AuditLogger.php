@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\Audit\Services;
 
 use App\Models\AuditLog;
+use App\Models\Document;
+use App\Models\DocumentShare;
+use App\Models\Folder;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,11 +35,11 @@ class AuditLogger
     private function resourceType(Model $resource): string
     {
         return match ($resource::class) {
-            \App\Models\Document::class => 'document',
-            \App\Models\Folder::class => 'folder',
-            \App\Models\User::class => 'user',
-            \App\Models\Role::class => 'role',
-            \App\Models\DocumentShare::class => 'document_share',
+            Document::class => 'document',
+            Folder::class => 'folder',
+            User::class => 'user',
+            Role::class => 'role',
+            DocumentShare::class => 'document_share',
             default => class_basename($resource),
         };
     }

@@ -10,6 +10,7 @@ use App\Domain\Documents\Services\DocumentDiffService;
 use App\Domain\Documents\Services\DocumentUploadService;
 use App\Domain\Documents\Services\MetadataService;
 use App\Domain\Documents\Services\TrashService;
+use App\Domain\OnlyOffice\OnlyOfficeSupport;
 use App\Domain\Sharing\Services\ShareService;
 use App\Domain\Signature\Signataire;
 use App\Domain\Signature\SignatureProviderException;
@@ -18,6 +19,7 @@ use App\Domain\Workflow\Services\WorkflowService;
 use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
@@ -194,6 +196,20 @@ class Show extends Component
         $this->document->refresh();
     }
 
+    private function canEditOnline(): bool
+    {
+        if (! config('ged.onlyoffice.enabled') || ! Gate::allows('createVersion', $this->document)) {
+            return false;
+        }
+
+        $version = $this->document->versionCourante;
+        if ($version === null) {
+            return false;
+        }
+
+        return OnlyOfficeSupport::isEditable(pathinfo($version->storage_path, PATHINFO_EXTENSION));
+    }
+
     private function currentWorkflowInstance()
     {
         $instance = $this->document->currentWorkflowInstance();
@@ -229,7 +245,7 @@ class Show extends Component
         app(ShareService::class)->createLink(
             $this->document,
             Auth::user(),
-            \Illuminate\Support\Carbon::parse($this->shareExpiresAt),
+            Carbon::parse($this->shareExpiresAt),
             $this->sharePassword ?: null,
         );
 
@@ -313,6 +329,7 @@ class Show extends Component
             'workflowInstance' => $this->document->currentWorkflowInstance(),
             'signatureConfigured' => app(SignatureService::class)->isConfigured(),
             'signatureRequests' => $this->document->signatureRequests,
+            'canEditOnline' => $this->canEditOnline(),
         ]);
     }
 }

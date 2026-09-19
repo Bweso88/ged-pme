@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Tests\Feature\Documents;
 
 use App\Domain\Documents\Services\DocumentUploadService;
-use App\Domain\Signature\Providers\NullSignatureProvider;
 use App\Domain\Signature\Signataire;
 use App\Domain\Signature\SignatureProvider;
 use App\Domain\Signature\SignatureProviderException;
 use App\Domain\Signature\SignatureService;
 use App\Livewire\Documents\Show;
+use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Role;
 use App\Models\SignatureRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\Concerns\InteractsWithTenants;
@@ -72,7 +71,7 @@ class SignatureRequestTest extends TestCase
 
         $this->app->bind(SignatureProvider::class, fn () => new class implements SignatureProvider
         {
-            public function send(\App\Models\Document $document, array $signataires): string
+            public function send(Document $document, array $signataires): string
             {
                 return 'ext-123';
             }
@@ -104,7 +103,7 @@ class SignatureRequestTest extends TestCase
         {
             public function __construct(private string $signedTmpPath) {}
 
-            public function send(\App\Models\Document $document, array $signataires): string
+            public function send(Document $document, array $signataires): string
             {
                 return 'ext-123';
             }

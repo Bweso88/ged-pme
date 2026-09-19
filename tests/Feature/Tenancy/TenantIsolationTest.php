@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Tenancy;
 
+use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Role;
 use App\Support\Tenancy\TenantContext;
@@ -50,7 +51,7 @@ class TenantIsolationTest extends TestCase
 
         $userA = $this->actingAsCompanyUser($companyA, Role::EMPLOYE);
         $folderA = Folder::query()->create(['nom' => 'Dossier A', 'created_by' => $userA->id]);
-        $documentA = \App\Models\Document::query()->create([
+        $documentA = Document::query()->create([
             'folder_id' => $folderA->id, 'nom' => 'doc-a.txt', 'auteur_id' => $userA->id, 'proprietaire_id' => $userA->id,
         ]);
 

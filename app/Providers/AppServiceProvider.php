@@ -33,14 +33,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OcrEngine::class, function () {
             return match (config('ged.ocr.engine')) {
                 'tesseract' => new TesseractOcrEngine((string) config('ged.ocr.tesseract_binary')),
-                default => new NullOcrEngine(),
+                default => new NullOcrEngine,
             };
         });
 
         $this->app->bind(AntivirusScanner::class, function () {
             return match (config('ged.antivirus.driver')) {
                 'clamav' => new ClamAvAntivirusScanner((string) config('ged.antivirus.binary')),
-                default => new NullAntivirusScanner(),
+                default => new NullAntivirusScanner,
             };
         });
 
@@ -52,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
                     (string) config('ged.signature.yousign.api_key'),
                     (string) config('ged.signature.yousign.base_url'),
                 ),
-                default => new NullSignatureProvider(),
+                default => new NullSignatureProvider,
             };
         });
     }

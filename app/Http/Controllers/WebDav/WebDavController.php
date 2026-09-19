@@ -29,7 +29,7 @@ class WebDavController extends Controller
     {
         $root = new FolderCollection($context, null, 'YOSEFA');
 
-        $server = new Server($root, new SilentSapi());
+        $server = new Server($root, new SilentSapi);
         $server->setBaseUri('/webdav/');
         $server->addPlugin(new AuthPlugin($authBackend));
 
@@ -37,7 +37,7 @@ class WebDavController extends Controller
         // reconstruction fidèle de la requête Laravel déjà parsée : évite de relire php://input,
         // potentiellement déjà consommé, et rend le contrôleur testable comme une route normale.
         $server->httpRequest = new SabreRequest($request->method(), $request->getRequestUri(), $request->headers->all(), $request->getContent());
-        $server->httpResponse = new SabreResponse();
+        $server->httpResponse = new SabreResponse;
 
         // start() (alias exec()) convertit lui-même les exceptions Sabre (401, 403, 404...) en
         // réponse HTTP correcte ; invokeMethod() seul ne le fait pas.

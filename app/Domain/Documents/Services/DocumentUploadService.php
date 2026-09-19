@@ -13,6 +13,7 @@ use App\Models\Document;
 use App\Models\DocumentVersion;
 use App\Models\Folder;
 use App\Models\User;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -84,7 +85,7 @@ class DocumentUploadService
 
     private function createVersion(
         Document $document,
-        \Illuminate\Contracts\Filesystem\Filesystem $disk,
+        Filesystem $disk,
         string $storagePath,
         UploadedFile $file,
         string $hash,
@@ -114,7 +115,7 @@ class DocumentUploadService
         return $version;
     }
 
-    private function storeFile(\Illuminate\Contracts\Filesystem\Filesystem $disk, string $companyId, UploadedFile $file): string
+    private function storeFile(Filesystem $disk, string $companyId, UploadedFile $file): string
     {
         $extension = strtolower($file->getClientOriginalExtension());
         $path = sprintf('tenants/%s/documents/%s.%s', $companyId, Str::uuid(), $extension);

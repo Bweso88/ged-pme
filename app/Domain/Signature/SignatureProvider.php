@@ -17,7 +17,7 @@ use App\Models\Document;
 interface SignatureProvider
 {
     /**
-     * @param Signataire[] $signataires
+     * @param  Signataire[]  $signataires
      * @return string Identifiant de la demande chez le prestataire (à conserver pour le suivi/webhook)
      *
      * @throws SignatureProviderException
@@ -26,7 +26,7 @@ interface SignatureProvider
 
     /**
      * @return string|null Chemin local temporaire du document signé (avec preuve jointe),
-     *                      ou null si la signature n'est pas (encore) terminée.
+     *                     ou null si la signature n'est pas (encore) terminée.
      */
     public function downloadSignedDocument(string $externalId): ?string;
 }

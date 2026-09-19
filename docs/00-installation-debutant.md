@@ -439,6 +439,38 @@ leur API). Sans clé configurée (comportement par défaut), toute tentative d'e
 
 ---
 
+## 12 quinquies. Édition Office en ligne (OnlyOffice, optionnel — non testée en conditions réelles)
+
+Permet d'ouvrir et modifier un Word/Excel/PowerPoint directement dans le navigateur (bouton
+"Éditer en ligne" sur la fiche document), sans télécharger/re-uploader manuellement. Nécessite un
+second service, le **Document Server OnlyOffice**, séparé de YOSEFA.
+
+**1. Démarrer le Document Server** (nécessite Docker) :
+```bash
+export ONLYOFFICE_JWT_SECRET=$(openssl rand -hex 32)
+docker compose -f docker/onlyoffice/docker-compose.yml up -d
+```
+Notez la valeur de `ONLYOFFICE_JWT_SECRET` affichée/générée — vous en aurez besoin à l'étape 2.
+Il écoute par défaut sur le port `8082`.
+
+**2. Configurer YOSEFA** (`.env`) :
+```
+GED_ONLYOFFICE_ENABLED=true
+GED_ONLYOFFICE_DOCUMENT_SERVER_URL=http://localhost:8082
+GED_ONLYOFFICE_JWT_SECRET=<la même valeur qu'à l'étape 1>
+```
+Si YOSEFA et le Document Server ne sont pas sur la même machine, ou communiquent via un réseau
+Docker interne, complétez aussi `GED_ONLYOFFICE_INTERNAL_APP_URL` avec l'URL à laquelle **le
+Document Server** peut atteindre YOSEFA (peut différer de `APP_URL`, qui est l'URL vue par les
+navigateurs).
+
+⚠️ Comme pour Yousign, cette intégration a été écrite d'après la documentation publique
+d'OnlyOffice mais **n'a pas pu être testée avec un vrai Document Server** dans l'environnement de
+développement (Docker non disponible). Testez le cycle complet (ouverture, modification,
+fermeture → nouvelle version créée dans YOSEFA) avant toute mise en production.
+
+---
+
 ## 13. Et après ?
 
 - Pour comprendre *pourquoi* le projet est construit ainsi (multi-tenant, sécurité, workflow...),

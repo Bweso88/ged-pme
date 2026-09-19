@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Documents\DownloadController;
+use App\Http\Controllers\OnlyOffice\CallbackController as OnlyOfficeCallbackController;
+use App\Http\Controllers\OnlyOffice\ContentController as OnlyOfficeContentController;
+use App\Http\Controllers\OnlyOffice\EditorController as OnlyOfficeEditorController;
 use App\Http\Controllers\Sharing\ShareLinkController;
 use App\Http\Controllers\WebDav\WebDavController;
 use App\Livewire\Admin\DocumentTypes\Index as AdminDocumentTypes;
@@ -38,6 +41,13 @@ Route::match(
     WebDavController::class,
 )->where('path', '.*')->name('webdav');
 
+// Requêtes serveur à serveur depuis le Document Server OnlyOffice, sans session Laravel :
+// l'autorisation vient de la signature de l'URL (voir OnlyOfficeConfigService), pas du login.
+Route::middleware('signed')->group(function () {
+    Route::get('/onlyoffice/documents/{company}/{document}/contenu', OnlyOfficeContentController::class)->name('onlyoffice.content');
+    Route::post('/onlyoffice/documents/{company}/{document}/rappel', OnlyOfficeCallbackController::class)->name('onlyoffice.callback');
+});
+
 Route::middleware('auth')->group(function () {
     Route::post('/logout', LogoutController::class)->name('logout');
 
@@ -47,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/dossier/{folder}', Explorer::class)->name('documents.show-folder');
     Route::get('/documents/d/{document}', DocumentShow::class)->name('documents.show');
     Route::get('/documents/d/{document}/telecharger', DownloadController::class)->name('documents.download');
+    Route::get('/documents/d/{document}/editer-en-ligne', OnlyOfficeEditorController::class)->name('documents.edit-online');
 
     Route::get('/recherche', SearchIndex::class)->name('search');
     Route::get('/mes-taches', TasksIndex::class)->name('tasks.index');

@@ -51,4 +51,19 @@ return [
             'base_url' => env('GED_SIGNATURE_YOUSIGN_BASE_URL', 'https://api-sandbox.yousign.app/v3'),
         ],
     ],
+
+    // Édition Office en ligne (Word/Excel/PowerPoint dans le navigateur) via un serveur OnlyOffice
+    // Document Server séparé (voir docker/onlyoffice/docker-compose.yml). Désactivée par défaut.
+    'onlyoffice' => [
+        'enabled' => (bool) env('GED_ONLYOFFICE_ENABLED', false),
+        // URL du Document Server telle que joignable depuis le NAVIGATEUR de l'utilisateur.
+        'document_server_url' => env('GED_ONLYOFFICE_DOCUMENT_SERVER_URL'),
+        // Signature des configurations d'éditeur et vérification des rappels (fortement
+        // recommandé en production — voir JWT_SECRET dans docker/onlyoffice/docker-compose.yml).
+        'jwt_secret' => env('GED_ONLYOFFICE_JWT_SECRET'),
+        // URL à laquelle LE SERVEUR OnlyOffice (pas le navigateur) peut atteindre YOSEFA, si
+        // différente de APP_URL (ex. les deux conteneurs communiquent sur un réseau Docker
+        // interne alors que APP_URL est l'URL publique). Laisser vide si elles sont identiques.
+        'internal_app_url' => env('GED_ONLYOFFICE_INTERNAL_APP_URL'),
+    ],
 ];

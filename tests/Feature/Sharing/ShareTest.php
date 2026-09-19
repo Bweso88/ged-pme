@@ -9,6 +9,9 @@ use App\Models\Document;
 use App\Models\DocumentShare;
 use App\Models\Folder;
 use App\Models\Role;
+use App\Models\User;
+use App\Notifications\DocumentShared;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
@@ -19,7 +22,7 @@ class ShareTest extends TestCase
 {
     use InteractsWithTenants, RefreshDatabase;
 
-    private function makeDocument(\App\Models\User $user): Document
+    private function makeDocument(User $user): Document
     {
         $folder = Folder::query()->create(['nom' => 'Achats', 'created_by' => $user->id]);
 
@@ -48,7 +51,7 @@ class ShareTest extends TestCase
         $user = $this->actingAsCompanyUser($company, Role::EMPLOYE);
         $document = $this->makeDocument($user);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         DocumentShare::query()->create([
             'document_id' => $document->id, 'cree_par' => $user->id, 'type' => DocumentShare::TYPE_LIEN,
             'token' => 'abc', 'expire_at' => null,
@@ -96,6 +99,6 @@ class ShareTest extends TestCase
 
         app(ShareService::class)->shareWithUser($document, $colleague, $user);
 
-        Notification::assertSentTo($colleague, \App\Notifications\DocumentShared::class);
+        Notification::assertSentTo($colleague, DocumentShared::class);
     }
 }

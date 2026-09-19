@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\WorkflowAction;
 use App\Models\WorkflowDefinition;
 use App\Models\WorkflowInstance;
+use App\Models\WorkflowStep;
 use App\Notifications\DocumentSubmittedForValidation;
 use App\Notifications\DocumentValidationDecision;
 use Illuminate\Validation\ValidationException;
@@ -128,7 +129,7 @@ class WorkflowService
         $this->auditLogger->log($approver, AuditLog::VALIDATION, $instance->document, ['action' => $action]);
     }
 
-    private function notifyStepApprovers(\App\Models\WorkflowStep $step, Document $document): void
+    private function notifyStepApprovers(WorkflowStep $step, Document $document): void
     {
         if ($step->user_requis_id !== null) {
             $step->userRequis?->notify(new DocumentSubmittedForValidation($document));
