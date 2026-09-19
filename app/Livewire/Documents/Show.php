@@ -6,6 +6,7 @@ namespace App\Livewire\Documents;
 
 use App\Domain\Archiving\Services\ArchiveService;
 use App\Domain\Audit\Services\AuditLogger;
+use App\Domain\Documents\Services\DocumentDiffService;
 use App\Domain\Documents\Services\DocumentUploadService;
 use App\Domain\Documents\Services\MetadataService;
 use App\Domain\Documents\Services\TrashService;
@@ -46,6 +47,14 @@ class Show extends Component
     public string $archiveMotif = '';
 
     public string $archiveConfidentialite = 'interne';
+
+    public string $compareFromVersionId = '';
+
+    public string $compareToVersionId = '';
+
+    public ?string $diffOutput = null;
+
+    public bool $diffUnavailable = false;
 
     public function mount(Document $document): void
     {
@@ -94,6 +103,30 @@ class Show extends Component
         $this->newVersion = null;
         $this->newVersionComment = '';
         $this->document->refresh();
+    }
+
+    public function compareVersions(): void
+    {
+        Gate::authorize('view', $this->document);
+        $this->validate([
+            'compareFromVersionId' => ['required'],
+            'compareToVersionId' => ['required', 'different:compareFromVersionId'],
+        ], [], ['compareFromVersionId' => 'version de départ', 'compareToVersionId' => 'version d\'arrivée']);
+
+        $from = $this->document->versions()->findOrFail($this->compareFromVersionId);
+        $to = $this->document->versions()->findOrFail($this->compareToVersionId);
+
+        $diffService = app(DocumentDiffService::class);
+
+        if (! $diffService->canCompare($from, $to)) {
+            $this->diffOutput = null;
+            $this->diffUnavailable = true;
+
+            return;
+        }
+
+        $this->diffUnavailable = false;
+        $this->diffOutput = $diffService->diff($from, $to);
     }
 
     public function restoreVersion(string $versionId): void

@@ -113,6 +113,39 @@
             <input wire:model="newVersionComment" type="text" placeholder="Commentaire" class="rounded-md border-slate-300 text-sm">
             <button wire:click="uploadNewVersion" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Ajouter une version</button>
         </div>
+
+        @if ($document->versions->count() > 1)
+            <div class="mt-4 border-t border-slate-100 pt-3">
+                <p class="text-xs text-slate-500 mb-2">Comparer deux versions (basé sur le texte extrait par OCR)</p>
+                <div class="flex items-center gap-2">
+                    <select wire:model="compareFromVersionId" class="rounded-md border-slate-300 text-sm">
+                        <option value="">Version...</option>
+                        @foreach ($document->versions as $version)
+                            <option value="{{ $version->id }}">v{{ $version->numero_version }}</option>
+                        @endforeach
+                    </select>
+                    <span class="text-slate-400">→</span>
+                    <select wire:model="compareToVersionId" class="rounded-md border-slate-300 text-sm">
+                        <option value="">Version...</option>
+                        @foreach ($document->versions as $version)
+                            <option value="{{ $version->id }}">v{{ $version->numero_version }}</option>
+                        @endforeach
+                    </select>
+                    <button wire:click="compareVersions" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Comparer</button>
+                </div>
+                @error('compareFromVersionId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                @error('compareToVersionId') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+
+                @if ($diffUnavailable)
+                    <p class="mt-2 text-xs text-slate-500">Aucun texte extrait (OCR) disponible sur l'une de ces versions : la comparaison n'est pas possible.</p>
+                @endif
+
+                @if ($diffOutput !== null)
+                    <pre class="mt-3 max-h-96 overflow-auto rounded-md bg-slate-950 p-3 text-xs leading-5">@foreach (explode("\n", $diffOutput) as $line)<span class="block {{ str_starts_with($line, '+') && ! str_starts_with($line, '+++') ? 'text-emerald-400' : (str_starts_with($line, '-') && ! str_starts_with($line, '---') ? 'text-red-400' : 'text-slate-400') }}">{{ $line }}</span>
+@endforeach</pre>
+                @endif
+            </div>
+        @endif
     </div>
 
     {{-- Partage --}}
