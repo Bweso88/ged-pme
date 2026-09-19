@@ -419,6 +419,26 @@ une pièce jointe rejetée est simplement ignorée. Vérification manuelle immé
 
 ---
 
+## 12 quater. Signature électronique (optionnel, non testée en conditions réelles)
+
+Distincte de la validation de workflow ("Approuver"), qui n'a aucune valeur juridique de
+signature. Intégration écrite pour Yousign, prête à activer une fois un compte créé :
+
+```
+GED_SIGNATURE_DRIVER=yousign
+GED_SIGNATURE_YOUSIGN_API_KEY=<votre clé API, sandbox d'abord>
+GED_SIGNATURE_YOUSIGN_BASE_URL=https://api-sandbox.yousign.app/v3
+```
+
+⚠️ Cette intégration a été écrite d'après la documentation publique de l'API Yousign v3, mais
+**n'a pas pu être vérifiée avec un compte réel** au moment de son développement. Testez-la
+d'abord avec une clé API **sandbox** Yousign et une demande de signature réelle avant toute mise
+en production, en particulier le format exact des appels (qui peut évoluer avec les versions de
+leur API). Sans clé configurée (comportement par défaut), toute tentative d'envoi en signature
+échoue explicitement — jamais de faux positif laissant croire qu'un document a été envoyé.
+
+---
+
 ## 13. Et après ?
 
 - Pour comprendre *pourquoi* le projet est construit ainsi (multi-tenant, sécurité, workflow...),

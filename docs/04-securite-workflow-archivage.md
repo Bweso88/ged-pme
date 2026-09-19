@@ -46,6 +46,7 @@ Permissions granulaires, cumulables via rôles ET attribuables directement à un
 | Restaurer une version | — | ✅ | ✅ | ✅ (droit explicite) | ❌ par défaut | ❌ |
 | Déplacer/renommer | — | ✅ | ✅ | ✅ | ✅ (ses documents) | ❌ |
 | Partager | — | ✅ | ✅ | ✅ | ✅ (droit explicite) | ❌ |
+| Demander une signature électronique | — | ✅ | ✅ | ✅ | ❌ | ❌ |
 | Soumettre en workflow | — | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Valider (approuver/rejeter) | — | ✅ | ✅ (selon étape) | ✅ (selon étape) | ❌ | ❌ |
 | Archiver | — | ✅ | ✅ | ✅ (droit explicite) | ❌ | ❌ |

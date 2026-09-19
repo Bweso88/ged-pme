@@ -33,12 +33,12 @@ class SystemRoleSeeder extends Seeder
             Role::RESPONSABLE_DOCUMENTAIRE => [
                 'document.view', 'document.download', 'document.create', 'document.edit_metadata',
                 'document.new_version', 'document.restore_version', 'document.move', 'document.share',
-                'document.submit_workflow', 'document.validate', 'document.archive', 'document.delete',
-                'document.restore_trash', 'folder.manage', 'admin.settings', 'admin.audit',
+                'document.sign', 'document.submit_workflow', 'document.validate', 'document.archive',
+                'document.delete', 'document.restore_trash', 'folder.manage', 'admin.settings', 'admin.audit',
             ],
             Role::MANAGER => [
                 'document.view', 'document.download', 'document.create', 'document.edit_metadata',
-                'document.new_version', 'document.submit_workflow', 'document.validate',
+                'document.new_version', 'document.sign', 'document.submit_workflow', 'document.validate',
                 'document.delete', 'document.restore_trash',
             ],
             Role::EMPLOYE => [

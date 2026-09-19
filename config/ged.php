@@ -40,4 +40,15 @@ return [
         'target_folder_id' => env('GED_EMAIL_CAPTURE_TARGET_FOLDER_ID'),
         'uploader_user_id' => env('GED_EMAIL_CAPTURE_UPLOADER_USER_ID'),
     ],
+
+    // Signature électronique (voir doc 04, §13.3) : "yousign" ou "null" (désactivée, défaut).
+    // Distincte de la validation de workflow ("Approuver"), qui n'a aucune valeur juridique de
+    // signature.
+    'signature' => [
+        'driver' => env('GED_SIGNATURE_DRIVER', 'null'),
+        'yousign' => [
+            'api_key' => env('GED_SIGNATURE_YOUSIGN_API_KEY'),
+            'base_url' => env('GED_SIGNATURE_YOUSIGN_BASE_URL', 'https://api-sandbox.yousign.app/v3'),
+        ],
+    ],
 ];

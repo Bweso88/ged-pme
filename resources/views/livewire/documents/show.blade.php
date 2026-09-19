@@ -187,4 +187,58 @@
             </div>
         </div>
     @endcan
+
+    {{-- Signature électronique --}}
+    @can('sign', $document)
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-4">
+            <h3 class="font-medium text-slate-800">Signature électronique</h3>
+            <p class="text-xs text-slate-500">
+                Distinct de la validation de workflow : ceci déclenche une signature électronique
+                juridiquement opposable via un prestataire tiers.
+            </p>
+
+            @if (! $signatureConfigured)
+                <p class="text-sm text-amber-600 bg-amber-50 rounded-md px-3 py-2">
+                    Aucun prestataire de signature électronique n'est configuré. Contactez votre administrateur.
+                </p>
+            @endif
+
+            @if ($signatureRequests->isNotEmpty())
+                <ul class="text-sm divide-y divide-slate-100">
+                    @foreach ($signatureRequests as $request)
+                        <li class="py-2 flex items-center justify-between">
+                            <span>
+                                {{ collect($request->signataires)->pluck('email')->join(', ') }}
+                            </span>
+                            <span class="text-xs rounded-full px-2 py-0.5 {{ $request->statut === 'signe' ? 'bg-emerald-100 text-emerald-700' : ($request->statut === 'erreur' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600') }}">
+                                {{ $request->statut }}
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+
+            @if ($signatureConfigured)
+                <ul class="text-sm divide-y divide-slate-100">
+                    @foreach ($pendingSignataires as $index => $signataire)
+                        <li class="py-1 flex items-center justify-between">
+                            <span>{{ $signataire['nom'] }} — {{ $signataire['email'] }}</span>
+                            <button wire:click="removeSignataire({{ $index }})" class="text-red-600 hover:underline text-xs">Retirer</button>
+                        </li>
+                    @endforeach
+                </ul>
+
+                <div class="flex gap-2">
+                    <input wire:model="signataireNom" type="text" placeholder="Nom du signataire" class="rounded-md border-slate-300 text-sm">
+                    <input wire:model="signataireEmail" type="email" placeholder="E-mail" class="rounded-md border-slate-300 text-sm">
+                    <button wire:click="addSignataire" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm">Ajouter</button>
+                </div>
+                @error('signataireNom') <p class="text-xs text-red-600">{{ $message }}</p> @enderror
+                @error('signataireEmail') <p class="text-xs text-red-600">{{ $message }}</p> @enderror
+                @error('pendingSignataires') <p class="text-xs text-red-600">{{ $message }}</p> @enderror
+
+                <button wire:click="requestSignature" class="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">Envoyer en signature</button>
+            @endif
+        </div>
+    @endcan
 </div>

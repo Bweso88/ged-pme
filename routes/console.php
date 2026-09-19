@@ -11,3 +11,6 @@ Artisan::command('inspire', function () {
 // Sans effet tant que GED_EMAIL_CAPTURE_ENABLED=false (voir config/ged.php) : la commande
 // s'arrête immédiatement dans ce cas, donc rien à ajuster ici une fois la capture activée.
 Schedule::command('ged:capture-emails')->everyFiveMinutes();
+
+// Idem : sans effet tant que GED_SIGNATURE_DRIVER n'est pas "yousign".
+Schedule::command('ged:sync-signatures')->everyFiveMinutes();

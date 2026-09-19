@@ -11,6 +11,9 @@ use App\Domain\Documents\Services\DocumentUploadService;
 use App\Domain\Documents\Services\MetadataService;
 use App\Domain\Documents\Services\TrashService;
 use App\Domain\Sharing\Services\ShareService;
+use App\Domain\Signature\Signataire;
+use App\Domain\Signature\SignatureProviderException;
+use App\Domain\Signature\SignatureService;
 use App\Domain\Workflow\Services\WorkflowService;
 use App\Models\AuditLog;
 use App\Models\Document;
@@ -55,6 +58,12 @@ class Show extends Component
     public ?string $diffOutput = null;
 
     public bool $diffUnavailable = false;
+
+    public array $pendingSignataires = [];
+
+    public string $signataireNom = '';
+
+    public string $signataireEmail = '';
 
     public function mount(Document $document): void
     {
@@ -237,6 +246,49 @@ class Show extends Component
         $this->document->refresh();
     }
 
+    public function addSignataire(): void
+    {
+        Gate::authorize('sign', $this->document);
+        $this->validate([
+            'signataireNom' => ['required', 'string', 'max:255'],
+            'signataireEmail' => ['required', 'email'],
+        ]);
+
+        $this->pendingSignataires[] = ['nom' => $this->signataireNom, 'email' => $this->signataireEmail];
+        $this->signataireNom = '';
+        $this->signataireEmail = '';
+    }
+
+    public function removeSignataire(int $index): void
+    {
+        unset($this->pendingSignataires[$index]);
+        $this->pendingSignataires = array_values($this->pendingSignataires);
+    }
+
+    public function requestSignature(): void
+    {
+        Gate::authorize('sign', $this->document);
+
+        if (empty($this->pendingSignataires)) {
+            $this->addError('pendingSignataires', 'Ajoutez au moins un signataire.');
+
+            return;
+        }
+
+        $signataires = array_map(fn (array $s) => new Signataire($s['nom'], $s['email']), $this->pendingSignataires);
+
+        try {
+            app(SignatureService::class)->requestSignature($this->document, $signataires, Auth::user());
+            $this->pendingSignataires = [];
+        } catch (SignatureProviderException $exception) {
+            $this->addError('pendingSignataires', $exception->getMessage());
+
+            return;
+        }
+
+        $this->document->refresh();
+    }
+
     public function archive(): void
     {
         Gate::authorize('archive', $this->document);
@@ -259,6 +311,8 @@ class Show extends Component
             'metadataFields' => app(MetadataService::class)->fieldsFor($this->document),
             'metadataSuggestions' => app(MetadataService::class)->pendingSuggestionsFor($this->document),
             'workflowInstance' => $this->document->currentWorkflowInstance(),
+            'signatureConfigured' => app(SignatureService::class)->isConfigured(),
+            'signatureRequests' => $this->document->signatureRequests,
         ]);
     }
 }

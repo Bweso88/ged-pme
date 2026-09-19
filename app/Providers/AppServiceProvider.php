@@ -12,6 +12,9 @@ use App\Domain\Ocr\OcrEngine;
 use App\Domain\Security\AntivirusScanner;
 use App\Domain\Security\Scanners\ClamAvAntivirusScanner;
 use App\Domain\Security\Scanners\NullAntivirusScanner;
+use App\Domain\Signature\Providers\NullSignatureProvider;
+use App\Domain\Signature\Providers\YousignSignatureProvider;
+use App\Domain\Signature\SignatureProvider;
 use App\Domain\WebDav\WebDavContext;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
@@ -42,6 +45,16 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(EmailInbox::class, fn () => new WebklexEmailInbox(config('ged.email_capture')));
+
+        $this->app->bind(SignatureProvider::class, function () {
+            return match (config('ged.signature.driver')) {
+                'yousign' => new YousignSignatureProvider(
+                    (string) config('ged.signature.yousign.api_key'),
+                    (string) config('ged.signature.yousign.base_url'),
+                ),
+                default => new NullSignatureProvider(),
+            };
+        });
     }
 
     /**

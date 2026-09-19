@@ -111,6 +111,11 @@ class Document extends Model
         return $this->hasMany(DocumentMetadataSuggestion::class);
     }
 
+    public function signatureRequests(): HasMany
+    {
+        return $this->hasMany(SignatureRequest::class)->latest();
+    }
+
     public function shares(): HasMany
     {
         return $this->hasMany(DocumentShare::class);

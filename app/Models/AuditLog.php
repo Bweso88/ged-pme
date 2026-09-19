@@ -43,6 +43,8 @@ class AuditLog extends Model
 
     public const CHANGEMENT_PERMISSION = 'changement_permission';
 
+    public const SIGNATURE = 'signature';
+
     public $timestamps = false;
 
     protected $fillable = ['company_id', 'utilisateur_id', 'action', 'ressource_type', 'ressource_id', 'ip_adresse', 'details'];

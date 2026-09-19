@@ -21,6 +21,7 @@ class PermissionSeeder extends Seeder
         'document.restore_version' => 'Restaurer une ancienne version',
         'document.move' => 'Déplacer un document',
         'document.share' => 'Partager un document',
+        'document.sign' => 'Demander une signature électronique',
         'document.submit_workflow' => 'Soumettre un document au workflow',
         'document.validate' => 'Valider une étape de workflow (approuver/rejeter)',
         'document.archive' => 'Archiver un document',

@@ -55,6 +55,11 @@ class DocumentPolicy
         return $this->sameTenant($user, $document) && $user->hasPermission('document.share', $document);
     }
 
+    public function sign(User $user, Document $document): bool
+    {
+        return $this->sameTenant($user, $document) && $user->hasPermission('document.sign', $document);
+    }
+
     public function submitWorkflow(User $user, Document $document): bool
     {
         return $this->sameTenant($user, $document) && $user->hasPermission('document.submit_workflow', $document);
