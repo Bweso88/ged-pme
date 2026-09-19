@@ -14,6 +14,7 @@ Ce dossier contient les 20 livrables demandés avant l'implémentation, regroup�
 | [04-securite-workflow-archivage.md](./04-securite-workflow-archivage.md) | 11. Modèle de sécurité — 12. Matrice rôles/permissions — 13. Workflow documentaire — 14. Politique d'archivage |
 | [05-ecrans-parcours.md](./05-ecrans-parcours.md) | 15. Liste des écrans — 16. Parcours utilisateur |
 | [06-sauvegarde-plan-dev-tests.md](./06-sauvegarde-plan-dev-tests.md) | 18. Stratégie de sauvegarde — 19. Plan de développement — 20. Plan de tests |
+| [07-positionnement-archivage-legal.md](./07-positionnement-archivage-legal.md) | Ce que YOSEFA est / n'est pas en matière d'archivage légal (document commercial et contractuel) |
 
 Le code applicatif (MVP Laravel) se trouve dans le reste du dossier `ged-pme/`.
 
