@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Domain\Documents\EmailCapture\EmailInbox;
+use App\Domain\Documents\EmailCapture\WebklexEmailInbox;
 use App\Domain\Ocr\Engines\NullOcrEngine;
 use App\Domain\Ocr\Engines\TesseractOcrEngine;
 use App\Domain\Ocr\OcrEngine;
@@ -38,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
                 default => new NullAntivirusScanner(),
             };
         });
+
+        $this->app->bind(EmailInbox::class, fn () => new WebklexEmailInbox(config('ged.email_capture')));
     }
 
     /**

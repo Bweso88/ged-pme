@@ -396,6 +396,29 @@ depuis ce lecteur réseau : utilisez l'interface web pour ces actions.
 
 ---
 
+## 12 ter. Capture automatique des emails (optionnel)
+
+Une boîte mail dédiée (ex. `depot@votreentreprise.com`) peut être surveillée automatiquement :
+les pièces jointes des emails non lus sont déposées dans un dossier "à classer" de YOSEFA, sans
+copie manuelle. Désactivée par défaut. Pour l'activer, ajoutez dans `.env` :
+
+```
+GED_EMAIL_CAPTURE_ENABLED=true
+GED_EMAIL_CAPTURE_HOST=imap.exemple.com
+GED_EMAIL_CAPTURE_PORT=993
+GED_EMAIL_CAPTURE_USERNAME=depot@votreentreprise.com
+GED_EMAIL_CAPTURE_PASSWORD=...
+GED_EMAIL_CAPTURE_TARGET_FOLDER_ID=<uuid du dossier "à classer", visible dans son URL>
+GED_EMAIL_CAPTURE_UPLOADER_USER_ID=<uuid de l'utilisateur technique, visible dans Admin > Utilisateurs>
+```
+
+Chaque pièce jointe passe par les mêmes contrôles qu'un dépôt manuel (extension, type, antivirus) ;
+une pièce jointe rejetée est simplement ignorée. Vérification manuelle immédiate :
+`php artisan ged:capture-emails`. En production, une tâche planifiée l'exécute déjà toutes les
+5 minutes (voir `routes/console.php`) — rien à configurer côté planification.
+
+---
+
 ## 13. Et après ?
 
 - Pour comprendre *pourquoi* le projet est construit ainsi (multi-tenant, sécurité, workflow...),
