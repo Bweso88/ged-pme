@@ -10,6 +10,7 @@ use App\Domain\Ocr\OcrEngine;
 use App\Domain\Security\AntivirusScanner;
 use App\Domain\Security\Scanners\ClamAvAntivirusScanner;
 use App\Domain\Security\Scanners\NullAntivirusScanner;
+use App\Domain\WebDav\WebDavContext;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(TenantContext::class);
+        $this->app->singleton(WebDavContext::class);
 
         $this->app->bind(OcrEngine::class, function () {
             return match (config('ged.ocr.engine')) {

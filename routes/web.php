@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Documents\DownloadController;
 use App\Http\Controllers\Sharing\ShareLinkController;
+use App\Http\Controllers\WebDav\WebDavController;
 use App\Livewire\Admin\DocumentTypes\Index as AdminDocumentTypes;
 use App\Livewire\Admin\Retention\Index as AdminRetention;
 use App\Livewire\Admin\Users\Index as AdminUsers;
@@ -27,6 +28,15 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/partage/{token}', ShareLinkController::class)->name('share-link.show');
+
+// Hors du groupe "auth" Laravel : l'authentification WebDAV (Basic Auth) est gérée par
+// Sabre\DAV lui-même (voir App\Domain\WebDav\AuthBackend), un client réseau (Windows/Mac) ne
+// portant pas de cookie de session.
+Route::match(
+    ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PROPFIND', 'PROPPATCH', 'MKCOL', 'COPY', 'MOVE', 'LOCK', 'UNLOCK', 'OPTIONS'],
+    '/webdav/{path?}',
+    WebDavController::class,
+)->where('path', '.*')->name('webdav');
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', LogoutController::class)->name('logout');

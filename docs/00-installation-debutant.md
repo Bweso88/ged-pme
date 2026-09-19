@@ -379,6 +379,23 @@ qui est testé et pourquoi les tests tournent sur PostgreSQL plutôt que sur une
 
 ---
 
+## 12 bis. Monter YOSEFA comme lecteur réseau (WebDAV)
+
+En plus de l'interface web, les dossiers et documents sont accessibles en WebDAV à l'adresse
+`http://votre-serveur/webdav/` — pratique pour ouvrir/modifier un fichier Office directement
+depuis l'explorateur de fichiers, sans passer par un téléchargement/upload manuel. Identifiants :
+ceux du compte YOSEFA habituel (email + mot de passe).
+
+- **Windows** : Poste de travail → "Ajouter un emplacement réseau" → entrez l'URL ci-dessus.
+- **macOS** : Finder → `Cmd+K` (Se connecter au serveur) → entrez l'URL ci-dessus.
+
+Un fichier ouvert et enregistré (Ctrl+S) depuis ce lecteur crée automatiquement une nouvelle
+version du document dans YOSEFA (même contrôle antivirus et de type de fichier qu'un upload
+classique). La création de dossiers et la suppression ne sont volontairement pas prises en charge
+depuis ce lecteur réseau : utilisez l'interface web pour ces actions.
+
+---
+
 ## 13. Et après ?
 
 - Pour comprendre *pourquoi* le projet est construit ainsi (multi-tenant, sécurité, workflow...),

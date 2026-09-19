@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             before: SubstituteBindings::class,
             prepend: ResolveTenant::class,
         );
+
+        // Le WebDAV s'authentifie lui-même (Basic Auth, voir App\Domain\WebDav\AuthBackend) :
+        // un client réseau (Windows/Mac) n'envoie pas de jeton CSRF sur ses requêtes PUT/DELETE.
+        $middleware->validateCsrfTokens(except: ['webdav/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
