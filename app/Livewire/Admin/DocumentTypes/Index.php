@@ -29,6 +29,8 @@ class Index extends Component
 
     public bool $fieldObligatoire = false;
 
+    public string $fieldExtractionPattern = '';
+
     public function mount(): void
     {
         Gate::authorize('admin.settings');
@@ -69,9 +71,10 @@ class Index extends Component
             'label' => $this->fieldLabel,
             'type' => $this->fieldType,
             'obligatoire' => $this->fieldObligatoire,
+            'extraction_pattern' => $this->fieldExtractionPattern ?: null,
         ]);
 
-        $this->reset(['fieldLabel', 'fieldCode', 'fieldObligatoire']);
+        $this->reset(['fieldLabel', 'fieldCode', 'fieldObligatoire', 'fieldExtractionPattern']);
         $this->fieldType = MetadataField::TYPE_TEXTE;
     }
 

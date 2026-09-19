@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Ocr\Jobs;
 
+use App\Domain\Documents\Services\MetadataExtractionService;
 use App\Domain\Ocr\OcrEngine;
 use App\Models\DocumentVersion;
 use Illuminate\Bus\Queueable;
@@ -23,7 +24,7 @@ class ProcessDocumentOcr implements ShouldQueue
 
     public function __construct(public string $documentVersionId) {}
 
-    public function handle(OcrEngine $ocrEngine): void
+    public function handle(OcrEngine $ocrEngine, MetadataExtractionService $metadataExtraction): void
     {
         $version = DocumentVersion::withoutTenantScope()->find($this->documentVersionId);
 
@@ -49,5 +50,9 @@ class ProcessDocumentOcr implements ShouldQueue
             'texte_ocr' => $text,
             'ocr_statut' => $text !== null ? DocumentVersion::OCR_TERMINE : DocumentVersion::OCR_ECHEC,
         ])->save();
+
+        if ($text !== null) {
+            $metadataExtraction->suggestFor($version);
+        }
     }
 }

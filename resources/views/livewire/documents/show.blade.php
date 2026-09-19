@@ -58,6 +58,25 @@
         </div>
     @endif
 
+    {{-- Suggestions d'extraction automatique --}}
+    @if ($metadataSuggestions->isNotEmpty())
+        <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <h3 class="font-medium text-slate-800 mb-1">Détecté automatiquement dans le document</h3>
+            <p class="text-xs text-slate-500 mb-3">Extrait du contenu OCR par des règles configurées sur le type de document — à valider avant d'être enregistré.</p>
+            <ul class="space-y-2">
+                @foreach ($metadataSuggestions as $suggestion)
+                    <li class="flex items-center justify-between rounded-md bg-white border border-amber-100 px-3 py-2 text-sm">
+                        <span><span class="text-slate-500">{{ $suggestion->metadataField->label }} :</span> <span class="font-medium text-slate-900">{{ $suggestion->valeur_proposee }}</span></span>
+                        <span class="flex gap-2">
+                            <button wire:click="acceptSuggestion('{{ $suggestion->id }}')" class="rounded-md bg-slate-900 px-2 py-1 text-xs text-white">Accepter</button>
+                            <button wire:click="rejectSuggestion('{{ $suggestion->id }}')" class="rounded-md ring-1 ring-slate-300 px-2 py-1 text-xs">Ignorer</button>
+                        </span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- Métadonnées --}}
     <div class="rounded-lg border border-slate-200 bg-white p-4">
         <h3 class="font-medium text-slate-800 mb-3">Métadonnées</h3>

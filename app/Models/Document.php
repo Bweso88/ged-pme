@@ -106,6 +106,11 @@ class Document extends Model
         return $this->hasMany(DocumentMetadataValue::class);
     }
 
+    public function metadataSuggestions(): HasMany
+    {
+        return $this->hasMany(DocumentMetadataSuggestion::class);
+    }
+
     public function shares(): HasMany
     {
         return $this->hasMany(DocumentShare::class);

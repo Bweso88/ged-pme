@@ -39,6 +39,10 @@
                         <label class="mt-2 flex items-center gap-2 text-xs text-slate-500">
                             <input wire:model="fieldObligatoire" type="checkbox"> Champ obligatoire
                         </label>
+                        <div class="mt-2">
+                            <input wire:model="fieldExtractionPattern" type="text" placeholder="Règle d'extraction auto (regex, optionnel — ex : Facture\s*n[°o]\s*(\S+))" class="w-full rounded-md border-slate-300 text-xs font-mono">
+                            <p class="mt-1 text-xs text-slate-400">Si renseigné, la valeur du 1er groupe capturé sera proposée à l'utilisateur après l'OCR (jamais remplie automatiquement).</p>
+                        </div>
                     </div>
                 @endif
             </div>

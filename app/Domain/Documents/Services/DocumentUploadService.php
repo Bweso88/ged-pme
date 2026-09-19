@@ -6,6 +6,8 @@ namespace App\Domain\Documents\Services;
 
 use App\Domain\Audit\Services\AuditLogger;
 use App\Domain\Ocr\Jobs\ProcessDocumentOcr;
+use App\Domain\Security\AntivirusScanFailedException;
+use App\Domain\Security\AntivirusScanner;
 use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\DocumentVersion;
@@ -33,6 +35,7 @@ class DocumentUploadService
 
     public function __construct(
         private readonly AuditLogger $auditLogger,
+        private readonly AntivirusScanner $antivirus,
     ) {}
 
     public function upload(Folder $folder, UploadedFile $file, User $author, ?string $nom = null): Document
@@ -145,6 +148,31 @@ class DocumentUploadService
         $detectedMime = $file->getMimeType();
         if ($detectedMime !== null && ! $this->mimeMatchesExtension($detectedMime, $extension)) {
             throw ValidationException::withMessages(['file' => 'Le contenu du fichier ne correspond pas à son extension.']);
+        }
+
+        $this->assertFileIsClean($file);
+    }
+
+    /**
+     * Échec fermé : si le moteur antivirus ne peut pas rendre de verdict (démon injoignable...),
+     * l'upload est refusé plutôt qu'accepté sans vérification.
+     */
+    private function assertFileIsClean(UploadedFile $file): void
+    {
+        try {
+            $result = $this->antivirus->scan($file->getRealPath());
+        } catch (AntivirusScanFailedException $exception) {
+            report($exception);
+
+            throw ValidationException::withMessages([
+                'file' => "Impossible de vérifier l'absence de virus pour le moment, merci de réessayer.",
+            ]);
+        }
+
+        if (! $result->clean) {
+            throw ValidationException::withMessages([
+                'file' => "Fichier rejeté : menace détectée ({$result->menace}).",
+            ]);
         }
     }
 

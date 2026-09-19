@@ -16,4 +16,10 @@ return [
 
     // Nombre de jours de conservation en corbeille avant qu'une purge soit proposée (jamais automatique, voir doc 04 §14.4)
     'trash_retention_days' => (int) env('GED_TRASH_RETENTION_DAYS', 30),
+
+    'antivirus' => [
+        // "clamav" (scan réel via clamdscan) ou "null" (aucun scan, non recommandé en production)
+        'driver' => env('GED_ANTIVIRUS_DRIVER', 'null'),
+        'binary' => env('GED_ANTIVIRUS_BINARY', '/usr/bin/clamdscan'),
+    ],
 ];

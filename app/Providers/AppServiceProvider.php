@@ -7,6 +7,9 @@ namespace App\Providers;
 use App\Domain\Ocr\Engines\NullOcrEngine;
 use App\Domain\Ocr\Engines\TesseractOcrEngine;
 use App\Domain\Ocr\OcrEngine;
+use App\Domain\Security\AntivirusScanner;
+use App\Domain\Security\Scanners\ClamAvAntivirusScanner;
+use App\Domain\Security\Scanners\NullAntivirusScanner;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +27,13 @@ class AppServiceProvider extends ServiceProvider
             return match (config('ged.ocr.engine')) {
                 'tesseract' => new TesseractOcrEngine((string) config('ged.ocr.tesseract_binary')),
                 default => new NullOcrEngine(),
+            };
+        });
+
+        $this->app->bind(AntivirusScanner::class, function () {
+            return match (config('ged.antivirus.driver')) {
+                'clamav' => new ClamAvAntivirusScanner((string) config('ged.antivirus.binary')),
+                default => new NullAntivirusScanner(),
             };
         });
     }

@@ -24,7 +24,7 @@ class MetadataField extends Model
     public const TYPE_BOOLEEN = 'booleen';
 
     protected $fillable = [
-        'company_id', 'document_type_id', 'code', 'label', 'type', 'options', 'obligatoire', 'ordre',
+        'company_id', 'document_type_id', 'code', 'label', 'type', 'extraction_pattern', 'options', 'obligatoire', 'ordre',
     ];
 
     protected function casts(): array

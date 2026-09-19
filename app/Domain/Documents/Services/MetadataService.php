@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Documents\Services;
 
 use App\Models\Document;
+use App\Models\DocumentMetadataSuggestion;
 use App\Models\MetadataField;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -59,5 +60,30 @@ class MetadataService
             ->where('document_metadata_values.document_id', $document->id)
             ->pluck('document_metadata_values.valeur', 'metadata_fields.code')
             ->all();
+    }
+
+    /** @return \Illuminate\Support\Collection<int, DocumentMetadataSuggestion> */
+    public function pendingSuggestionsFor(Document $document): \Illuminate\Support\Collection
+    {
+        return DocumentMetadataSuggestion::query()
+            ->with('metadataField')
+            ->where('document_id', $document->id)
+            ->where('statut', DocumentMetadataSuggestion::STATUT_EN_ATTENTE)
+            ->get();
+    }
+
+    public function acceptSuggestion(DocumentMetadataSuggestion $suggestion): void
+    {
+        DB::table('document_metadata_values')->updateOrInsert(
+            ['document_id' => $suggestion->document_id, 'metadata_field_id' => $suggestion->metadata_field_id],
+            ['company_id' => $suggestion->company_id, 'valeur' => $suggestion->valeur_proposee],
+        );
+
+        $suggestion->forceFill(['statut' => DocumentMetadataSuggestion::STATUT_ACCEPTEE])->save();
+    }
+
+    public function rejectSuggestion(DocumentMetadataSuggestion $suggestion): void
+    {
+        $suggestion->forceFill(['statut' => DocumentMetadataSuggestion::STATUT_REJETEE])->save();
     }
 }

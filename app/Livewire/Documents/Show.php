@@ -65,6 +65,24 @@ class Show extends Component
         $this->dispatch('$refresh');
     }
 
+    public function acceptSuggestion(string $suggestionId): void
+    {
+        Gate::authorize('update', $this->document);
+
+        $suggestion = $this->document->metadataSuggestions()->findOrFail($suggestionId);
+        app(MetadataService::class)->acceptSuggestion($suggestion);
+
+        $this->metadata = app(MetadataService::class)->valuesFor($this->document);
+    }
+
+    public function rejectSuggestion(string $suggestionId): void
+    {
+        Gate::authorize('update', $this->document);
+
+        $suggestion = $this->document->metadataSuggestions()->findOrFail($suggestionId);
+        app(MetadataService::class)->rejectSuggestion($suggestion);
+    }
+
     public function uploadNewVersion(): void
     {
         Gate::authorize('createVersion', $this->document);
@@ -206,6 +224,7 @@ class Show extends Component
     {
         return view('livewire.documents.show', [
             'metadataFields' => app(MetadataService::class)->fieldsFor($this->document),
+            'metadataSuggestions' => app(MetadataService::class)->pendingSuggestionsFor($this->document),
             'workflowInstance' => $this->document->currentWorkflowInstance(),
         ]);
     }
