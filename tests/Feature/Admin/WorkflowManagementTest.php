@@ -96,4 +96,25 @@ class WorkflowManagementTest extends TestCase
 
         $this->assertNotNull(WorkflowDefinition::find($definition->id));
     }
+
+    public function test_removing_a_step_a_document_is_currently_waiting_on_is_refused(): void
+    {
+        Notification::fake();
+        $this->seedCatalog();
+        $company = $this->createCompany();
+        $author = $this->actingAsCompanyUser($company, Role::EMPLOYE);
+        $document = $this->makeDocument($company, $author);
+
+        $managerRole = Role::query()->whereNull('company_id')->where('code', Role::MANAGER)->firstOrFail();
+        $definition = WorkflowDefinition::query()->create(['nom' => 'Validation']);
+        $step = WorkflowStep::query()->create(['workflow_definition_id' => $definition->id, 'ordre' => 1, 'nom' => 'Manager', 'role_requis_id' => $managerRole->id]);
+
+        app(WorkflowService::class)->submit($document, $author);
+
+        $this->actingAsCompanyUser($company, Role::ADMIN_ENTREPRISE);
+        Livewire::test(Index::class)->call('removeStep', $step->id)->assertHasErrors('delete');
+
+        $this->assertNotNull(WorkflowStep::find($step->id));
+        $this->assertSame($step->id, $document->currentWorkflowInstance()->etape_courante_id);
+    }
 }

@@ -47,7 +47,7 @@
     {{-- Workflow --}}
     @if ($workflowInstance && $workflowInstance->statut === 'en_cours')
         <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <p class="text-sm font-medium text-amber-800">En attente de validation : {{ $workflowInstance->etapeCourante->nom }}</p>
+            <p class="text-sm font-medium text-amber-800">En attente de validation : {{ $workflowInstance->etapeCourante?->nom ?? 'étape supprimée — contactez un administrateur' }}</p>
 
             @can('validateWorkflow', $document)
                 <div class="mt-3 space-y-2">

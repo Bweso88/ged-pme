@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\Workflows;
 use App\Models\DocumentType;
 use App\Models\Role;
 use App\Models\WorkflowDefinition;
+use App\Models\WorkflowInstance;
 use App\Models\WorkflowStep;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -111,6 +112,18 @@ class Index extends Component
     public function removeStep(string $stepId): void
     {
         $step = WorkflowStep::query()->findOrFail($stepId);
+
+        // workflow_instances.etape_courante_id est en nullOnDelete (pas restrictOnDelete) :
+        // sans ce contrôle applicatif, PostgreSQL accepterait silencieusement la suppression
+        // d'une étape actuellement en attente sur un document, laissant l'instance orpheline.
+        if (WorkflowInstance::query()->where('etape_courante_id', $step->id)->where('statut', 'en_cours')->exists()) {
+            $this->addError(
+                'delete',
+                "Impossible de retirer l'étape « {$step->nom} » : au moins un document est actuellement en attente de validation sur cette étape.",
+            );
+
+            return;
+        }
 
         try {
             DB::transaction(fn () => $step->delete());
