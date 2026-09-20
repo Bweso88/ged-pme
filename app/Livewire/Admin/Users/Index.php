@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -24,6 +25,10 @@ class Index extends Component
     public string $email = '';
 
     public string $roleId = '';
+
+    public ?int $generatedPasswordUserId = null;
+
+    public ?string $generatedPassword = null;
 
     public function mount(): void
     {
@@ -56,11 +61,26 @@ class Index extends Component
         $this->reset(['name', 'email', 'roleId', 'showForm']);
     }
 
+    public function resetPassword(string $userId): void
+    {
+        Gate::authorize('admin.users');
+
+        $user = User::query()->where('company_id', Auth::user()->company_id)->findOrFail($userId);
+        $temporaryPassword = Str::password(12, symbols: false, spaces: false);
+
+        $user->forceFill(['password' => Hash::make($temporaryPassword)])->save();
+
+        app(AuditLogger::class)->log(Auth::user(), AuditLog::MODIFICATION, $user, ['action' => 'reinitialisation_mot_de_passe']);
+
+        $this->generatedPasswordUserId = $user->id;
+        $this->generatedPassword = $temporaryPassword;
+    }
+
     public function toggleSuspend(string $userId): void
     {
         Gate::authorize('admin.users');
 
-        $user = User::query()->findOrFail($userId);
+        $user = User::query()->where('company_id', Auth::user()->company_id)->findOrFail($userId);
         $user->forceFill(['statut' => $user->statut === 'actif' ? 'suspendu' : 'actif'])->save();
 
         app(AuditLogger::class)->log(Auth::user(), AuditLog::CHANGEMENT_PERMISSION, $user, ['nouveau_statut' => $user->statut]);

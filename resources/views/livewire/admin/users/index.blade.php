@@ -17,6 +17,14 @@
         @error('roleId') <p class="text-sm text-red-600 mb-2">{{ $message }}</p> @enderror
     @endif
 
+    @if ($generatedPassword)
+        <div class="mb-4 rounded-md bg-amber-50 ring-1 ring-amber-200 px-4 py-3 text-sm">
+            Mot de passe temporaire généré : <code class="font-mono font-semibold">{{ $generatedPassword }}</code>
+            — transmettez-le à l'utilisateur, il ne sera plus affiché après avoir quitté cette page.
+            <button wire:click="$set('generatedPassword', null)" class="ml-2 text-amber-700 hover:underline">Fermer</button>
+        </div>
+    @endif
+
     <table class="w-full text-sm bg-white rounded-lg ring-1 ring-slate-200 overflow-hidden">
         <thead class="bg-slate-50 text-slate-500 text-left">
             <tr>
@@ -34,7 +42,10 @@
                     <td class="px-4 py-2 text-slate-500">{{ $user->email }}</td>
                     <td class="px-4 py-2 text-slate-500">{{ $user->roles->pluck('nom')->implode(', ') }}</td>
                     <td class="px-4 py-2">{{ $user->statut }}</td>
-                    <td class="px-4 py-2 text-right">
+                    <td class="px-4 py-2 text-right space-x-3">
+                        <button wire:click="resetPassword('{{ $user->id }}')" wire:confirm="Générer un nouveau mot de passe temporaire pour {{ $user->name }} ?" class="text-slate-500 hover:underline">
+                            Réinitialiser le mot de passe
+                        </button>
                         <button wire:click="toggleSuspend('{{ $user->id }}')" class="text-slate-500 hover:underline">
                             {{ $user->statut === 'actif' ? 'Suspendre' : 'Réactiver' }}
                         </button>
