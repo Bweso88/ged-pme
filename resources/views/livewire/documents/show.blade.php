@@ -85,16 +85,23 @@
     {{-- Métadonnées --}}
     <div class="rounded-lg border border-slate-200 bg-white p-4">
         <h3 class="font-medium text-slate-800 mb-3">Métadonnées</h3>
-        <div class="grid grid-cols-2 gap-4">
-            @foreach ($metadataFields as $field)
-                <div>
-                    <label class="block text-sm text-slate-600">{{ $field->label }} @if($field->obligatoire) * @endif</label>
-                    <input wire:model="metadata.{{ $field->code }}" type="text" class="mt-1 w-full rounded-md border-slate-300 text-sm">
-                    @error("metadata.{$field->code}") <p class="text-xs text-red-600">{{ $message }}</p> @enderror
-                </div>
-            @endforeach
-        </div>
-        <button wire:click="saveMetadata" class="mt-3 rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">Enregistrer</button>
+        @if ($metadataFields->isEmpty())
+            <p class="text-sm text-slate-500">
+                Aucun champ de métadonnées pour ce document — il n'a pas de type assigné, ou son
+                type n'a aucun champ configuré (voir Admin &gt; Types de documents).
+            </p>
+        @else
+            <div class="grid grid-cols-2 gap-4">
+                @foreach ($metadataFields as $field)
+                    <div>
+                        <label class="block text-sm text-slate-600">{{ $field->label }} @if($field->obligatoire) * @endif</label>
+                        <input wire:model="metadata.{{ $field->code }}" type="text" class="mt-1 w-full rounded-md border-slate-300 text-sm">
+                        @error("metadata.{$field->code}") <p class="text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                @endforeach
+            </div>
+            <button wire:click="saveMetadata" class="mt-3 rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">Enregistrer</button>
+        @endif
     </div>
 
     {{-- Versions --}}
@@ -118,6 +125,8 @@
             <input wire:model="newVersionComment" type="text" placeholder="Commentaire" class="rounded-md border-slate-300 text-sm">
             <button wire:click="uploadNewVersion" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Ajouter une version</button>
         </div>
+        @error('newVersion') <p class="mt-1 text-xs text-red-600">Choisissez d'abord un fichier.</p> @enderror
+        @error('file') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
 
         @if ($document->versions->count() > 1)
             <div class="mt-4 border-t border-slate-100 pt-3">
