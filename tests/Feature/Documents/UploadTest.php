@@ -54,6 +54,37 @@ class UploadTest extends TestCase
         app(DocumentUploadService::class)->upload($folder, $file, $user);
     }
 
+    public function test_upload_accepts_a_pdf_with_no_extension_in_its_filename(): void
+    {
+        // Cas réel : un PDF téléchargé/exporté sans suffixe ".pdf" dans son nom. L'extension est
+        // alors déduite du type MIME réel plutôt que rejetée pour absence d'extension déclarée.
+        $this->seedCatalog();
+        $company = $this->createCompany();
+        $user = $this->actingAsCompanyUser($company, Role::EMPLOYE);
+        $folder = Folder::query()->create(['nom' => 'Achats', 'created_by' => $user->id]);
+
+        $file = UploadedFile::fake()->create('facture', 10)->mimeType('application/pdf');
+
+        $document = app(DocumentUploadService::class)->upload($folder, $file, $user);
+
+        $this->assertSame(1, $document->versions()->count());
+        Storage::disk('local')->assertExists($document->versionCourante->storage_path);
+        $this->assertStringEndsWith('.pdf', $document->versionCourante->storage_path);
+    }
+
+    public function test_upload_rejects_a_file_with_no_extension_and_no_identifiable_mime_type(): void
+    {
+        $this->seedCatalog();
+        $company = $this->createCompany();
+        $user = $this->actingAsCompanyUser($company, Role::EMPLOYE);
+        $folder = Folder::query()->create(['nom' => 'Achats', 'created_by' => $user->id]);
+
+        $file = UploadedFile::fake()->create('mystere', 10)->mimeType('application/x-msdownload');
+
+        $this->expectException(ValidationException::class);
+        app(DocumentUploadService::class)->upload($folder, $file, $user);
+    }
+
     public function test_upload_rejects_mime_type_not_matching_extension(): void
     {
         $this->seedCatalog();

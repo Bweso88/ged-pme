@@ -34,6 +34,24 @@ class DocumentUploadService
 
     private const OCR_ELIGIBLE_MIME_TYPES = ['application/pdf', 'image/png', 'image/jpeg'];
 
+    /**
+     * Extension déduite du type MIME réel quand le fichier n'a aucune extension dans son nom
+     * (cas fréquent d'un PDF téléchargé/exporté sans suffixe). N'inclut que les types MIME sans
+     * ambiguïté ; les formats Office modernes (.docx, .xlsx, .pptx) sont détectés par certains
+     * moteurs comme "application/zip" et ne peuvent donc pas être déduits de façon fiable.
+     */
+    private const MIME_TO_EXTENSION = [
+        'application/pdf' => 'pdf',
+        'application/msword' => 'doc',
+        'application/vnd.ms-excel' => 'xls',
+        'application/vnd.ms-powerpoint' => 'ppt',
+        'image/png' => 'png',
+        'image/jpeg' => 'jpg',
+        'text/plain' => 'txt',
+        'application/zip' => 'zip',
+        'application/x-zip-compressed' => 'zip',
+    ];
+
     public function __construct(
         private readonly AuditLogger $auditLogger,
         private readonly AntivirusScanner $antivirus,
@@ -41,10 +59,10 @@ class DocumentUploadService
 
     public function upload(Folder $folder, UploadedFile $file, User $author, ?string $nom = null, ?string $documentTypeId = null): Document
     {
-        $this->assertFileIsAllowed($folder, $file);
+        $extension = $this->assertFileIsAllowed($folder, $file);
 
         $disk = Storage::disk(config('ged.storage_disk'));
-        $storagePath = $this->storeFile($disk, $folder->company_id, $file);
+        $storagePath = $this->storeFile($disk, $folder->company_id, $file, $extension);
         $hash = hash_file('sha256', $file->getRealPath());
 
         $document = Document::query()->create([
@@ -67,10 +85,10 @@ class DocumentUploadService
 
     public function addVersion(Document $document, UploadedFile $file, User $author, ?string $commentaire = null): DocumentVersion
     {
-        $this->assertFileIsAllowed($document->folder, $file);
+        $extension = $this->assertFileIsAllowed($document->folder, $file);
 
         $disk = Storage::disk(config('ged.storage_disk'));
-        $storagePath = $this->storeFile($disk, $document->company_id, $file);
+        $storagePath = $this->storeFile($disk, $document->company_id, $file, $extension);
         $hash = hash_file('sha256', $file->getRealPath());
 
         $numero = $document->versions()->max('numero_version') + 1;
@@ -116,9 +134,8 @@ class DocumentUploadService
         return $version;
     }
 
-    private function storeFile(Filesystem $disk, string $companyId, UploadedFile $file): string
+    private function storeFile(Filesystem $disk, string $companyId, UploadedFile $file, string $extension): string
     {
-        $extension = strtolower($file->getClientOriginalExtension());
         $path = sprintf('tenants/%s/documents/%s.%s', $companyId, Str::uuid(), $extension);
 
         $stream = fopen($file->getRealPath(), 'rb');
@@ -132,9 +149,15 @@ class DocumentUploadService
         return $path;
     }
 
-    private function assertFileIsAllowed(Folder $folder, UploadedFile $file): void
+    private function assertFileIsAllowed(Folder $folder, UploadedFile $file): string
     {
-        $extension = strtolower($file->getClientOriginalExtension());
+        $extension = $this->resolveExtension($file);
+
+        if ($extension === '') {
+            throw ValidationException::withMessages([
+                'file' => "Impossible de déterminer le type de ce fichier : renommez-le avec son extension (par exemple .pdf) puis réessayez.",
+            ]);
+        }
 
         if (! in_array($extension, self::ALLOWED_EXTENSIONS, true)) {
             throw ValidationException::withMessages(['file' => "Extension .{$extension} non autorisée."]);
@@ -153,6 +176,24 @@ class DocumentUploadService
         }
 
         $this->assertFileIsClean($file);
+
+        return $extension;
+    }
+
+    /**
+     * L'extension déclarée par le navigateur (nom de fichier) prime quand elle existe. Si le
+     * fichier n'en a aucune (nom sans suffixe), on se rabat sur le type MIME réel détecté par
+     * le contenu — plus fiable qu'un nom de fichier, et ça évite de rejeter à tort un fichier
+     * valide simplement parce qu'il n'a pas de ".pdf"/".docx"/etc. dans son nom.
+     */
+    private function resolveExtension(UploadedFile $file): string
+    {
+        $declared = strtolower($file->getClientOriginalExtension());
+        if ($declared !== '') {
+            return $declared;
+        }
+
+        return self::MIME_TO_EXTENSION[$file->getMimeType()] ?? '';
     }
 
     /**
