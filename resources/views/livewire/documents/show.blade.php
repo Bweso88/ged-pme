@@ -23,6 +23,8 @@
         </div>
     </div>
 
+    @error('workflow') <p class="text-sm text-red-600 bg-red-50 rounded-md px-3 py-2">{{ $message }}</p> @enderror
+
     @if ($showArchiveForm)
         <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
             <h3 class="font-medium text-slate-800">Archiver le document</h3>
