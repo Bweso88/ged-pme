@@ -52,10 +52,17 @@ class Role extends Model
         return $this->belongsToMany(User::class, 'user_roles');
     }
 
-    /** Rôles système + rôles personnalisés de l'entreprise donnée. */
+    /**
+     * Rôles système + rôles personnalisés de l'entreprise donnée, à l'exclusion du
+     * Super Administrateur : ce rôle ne détient aucune permission tenant (il gère la
+     * plateforme, jamais le contenu d'une entreprise cliente — voir SystemRoleSeeder) et ne
+     * doit donc jamais être assignable à un utilisateur d'entreprise, sous peine de créer un
+     * compte totalement bloqué (aucun droit nulle part).
+     */
     public static function availableFor(Company $company): Builder
     {
         return static::query()
+            ->where('code', '!=', self::SUPER_ADMIN)
             ->where(function (Builder $query) use ($company) {
                 $query->whereNull('company_id')->orWhere('company_id', $company->id);
             });
