@@ -35,6 +35,7 @@
     @endif
 
     @error('uploads') <p class="text-sm text-red-600 mb-2">{{ $message }}</p> @enderror
+    @error('file') <p class="text-sm text-red-600 mb-2">{{ $message }}</p> @enderror
 
     <div wire:loading wire:target="uploads" class="mb-4 text-sm text-slate-500">Import en cours…</div>
 
