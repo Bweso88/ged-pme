@@ -113,6 +113,9 @@
                 @endforeach
             </div>
             <button wire:click="saveMetadata" class="mt-3 rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">Enregistrer</button>
+            @if ($metadataSaved)
+                <p class="mt-2 text-sm text-green-600">Métadonnées enregistrées.</p>
+            @endif
         @endif
     </div>
 

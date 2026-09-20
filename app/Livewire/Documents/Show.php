@@ -38,6 +38,8 @@ class Show extends Component
 
     public string $documentTypeId = '';
 
+    public bool $metadataSaved = false;
+
     public $newVersion = null;
 
     public string $newVersionComment = '';
@@ -86,7 +88,13 @@ class Show extends Component
         Gate::authorize('update', $this->document);
 
         app(MetadataService::class)->save($this->document, $this->metadata);
-        $this->dispatch('$refresh');
+        $this->metadataSaved = true;
+    }
+
+    /** Toute modification d'un champ invalide la confirmation d'un enregistrement précédent. */
+    public function updatedMetadata(): void
+    {
+        $this->metadataSaved = false;
     }
 
     public function changeDocumentType(): void
@@ -95,6 +103,7 @@ class Show extends Component
 
         $this->document->forceFill(['document_type_id' => $this->documentTypeId ?: null])->save();
         app(AuditLogger::class)->log(Auth::user(), AuditLog::MODIFICATION, $this->document, ['action' => 'changement_type_document']);
+        $this->metadataSaved = false;
 
         $this->document->refresh();
         $this->metadata = app(MetadataService::class)->valuesFor($this->document);
