@@ -18,6 +18,7 @@ use App\Domain\Signature\SignatureService;
 use App\Domain\Workflow\Services\WorkflowService;
 use App\Models\AuditLog;
 use App\Models\Document;
+use App\Models\DocumentType;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,8 @@ class Show extends Component
     public Document $document;
 
     public array $metadata = [];
+
+    public string $documentTypeId = '';
 
     public $newVersion = null;
 
@@ -73,6 +76,7 @@ class Show extends Component
 
         $this->document = $document;
         $this->metadata = app(MetadataService::class)->valuesFor($document);
+        $this->documentTypeId = (string) $document->document_type_id;
 
         app(AuditLogger::class)->log(Auth::user(), AuditLog::CONSULTATION, $document);
     }
@@ -83,6 +87,17 @@ class Show extends Component
 
         app(MetadataService::class)->save($this->document, $this->metadata);
         $this->dispatch('$refresh');
+    }
+
+    public function changeDocumentType(): void
+    {
+        Gate::authorize('update', $this->document);
+
+        $this->document->forceFill(['document_type_id' => $this->documentTypeId ?: null])->save();
+        app(AuditLogger::class)->log(Auth::user(), AuditLog::MODIFICATION, $this->document, ['action' => 'changement_type_document']);
+
+        $this->document->refresh();
+        $this->metadata = app(MetadataService::class)->valuesFor($this->document);
     }
 
     public function acceptSuggestion(string $suggestionId): void
@@ -324,6 +339,7 @@ class Show extends Component
     public function render()
     {
         return view('livewire.documents.show', [
+            'documentTypes' => DocumentType::query()->orderBy('nom')->get(),
             'metadataFields' => app(MetadataService::class)->fieldsFor($this->document),
             'metadataSuggestions' => app(MetadataService::class)->pendingSuggestionsFor($this->document),
             'workflowInstance' => $this->document->currentWorkflowInstance(),

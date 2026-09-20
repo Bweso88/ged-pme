@@ -39,7 +39,7 @@ class DocumentUploadService
         private readonly AntivirusScanner $antivirus,
     ) {}
 
-    public function upload(Folder $folder, UploadedFile $file, User $author, ?string $nom = null): Document
+    public function upload(Folder $folder, UploadedFile $file, User $author, ?string $nom = null, ?string $documentTypeId = null): Document
     {
         $this->assertFileIsAllowed($folder, $file);
 
@@ -49,6 +49,7 @@ class DocumentUploadService
 
         $document = Document::query()->create([
             'folder_id' => $folder->id,
+            'document_type_id' => $documentTypeId,
             'nom' => $nom ?? $file->getClientOriginalName(),
             'statut' => Document::STATUT_BROUILLON,
             'auteur_id' => $author->id,

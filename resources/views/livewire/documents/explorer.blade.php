@@ -15,7 +15,13 @@
         </div>
 
         @if ($folder)
-            <div>
+            <div class="flex items-center gap-2">
+                <select wire:model="uploadDocumentTypeId" class="rounded-md border-slate-300 text-sm shadow-sm focus:border-slate-500 focus:ring-slate-500">
+                    <option value="">Type de document (aucun)</option>
+                    @foreach ($documentTypes as $type)
+                        <option value="{{ $type->id }}">{{ $type->nom }}</option>
+                    @endforeach
+                </select>
                 <label class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white hover:bg-slate-700 cursor-pointer">
                     <span>Importer des documents</span>
                     <input type="file" wire:model="uploads" multiple class="hidden">

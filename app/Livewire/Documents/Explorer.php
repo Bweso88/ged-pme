@@ -7,6 +7,7 @@ namespace App\Livewire\Documents;
 use App\Domain\Documents\Services\DocumentUploadService;
 use App\Domain\Documents\Services\FolderService;
 use App\Models\Document;
+use App\Models\DocumentType;
 use App\Models\Folder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -28,6 +29,8 @@ class Explorer extends Component
 
     /** @var array<int, TemporaryUploadedFile> */
     public array $uploads = [];
+
+    public string $uploadDocumentTypeId = '';
 
     public function mount(?Folder $folder = null): void
     {
@@ -79,7 +82,7 @@ class Explorer extends Component
         $service = app(DocumentUploadService::class);
 
         foreach ($this->uploads as $upload) {
-            $service->upload($folder, $upload, Auth::user());
+            $service->upload($folder, $upload, Auth::user(), documentTypeId: $this->uploadDocumentTypeId ?: null);
         }
 
         $this->uploads = [];
@@ -96,6 +99,7 @@ class Explorer extends Component
             'documents' => $folder !== null
                 ? Document::query()->where('folder_id', $folder->id)->orderByDesc('updated_at')->get()
                 : collect(),
+            'documentTypes' => DocumentType::query()->orderBy('nom')->get(),
         ]);
     }
 }

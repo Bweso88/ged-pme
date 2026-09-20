@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Documents;
 
 use App\Livewire\Documents\Explorer;
+use App\Models\DocumentType;
 use App\Models\Folder;
 use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -58,5 +59,27 @@ class ExplorerUploadTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertSame(1, $folder->documents()->count());
+    }
+
+    public function test_a_document_type_chosen_before_import_is_assigned_to_the_new_document(): void
+    {
+        $this->seedCatalog();
+        $company = $this->createCompany();
+        $user = $this->actingAsCompanyUser($company, Role::EMPLOYE);
+        $folder = Folder::query()->create(['nom' => 'Achats', 'created_by' => $user->id]);
+        $type = DocumentType::query()->create(['nom' => 'Facture', 'code' => 'facture']);
+
+        $file = UploadedFile::fake()->create(
+            'facture.docx',
+            10,
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        );
+
+        Livewire::test(Explorer::class, ['folder' => $folder])
+            ->set('uploadDocumentTypeId', $type->id)
+            ->set('uploads', [$file])
+            ->assertHasNoErrors();
+
+        $this->assertSame($type->id, $folder->documents()->first()->document_type_id);
     }
 }

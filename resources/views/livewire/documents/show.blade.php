@@ -85,6 +85,18 @@
     {{-- Métadonnées --}}
     <div class="rounded-lg border border-slate-200 bg-white p-4">
         <h3 class="font-medium text-slate-800 mb-3">Métadonnées</h3>
+
+        <div class="mb-4 flex items-center gap-2">
+            <label class="text-sm text-slate-600">Type de document</label>
+            <select wire:model="documentTypeId" class="rounded-md border-slate-300 text-sm shadow-sm focus:border-slate-500 focus:ring-slate-500">
+                <option value="">Aucun</option>
+                @foreach ($documentTypes as $type)
+                    <option value="{{ $type->id }}">{{ $type->nom }}</option>
+                @endforeach
+            </select>
+            <button wire:click="changeDocumentType" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Changer</button>
+        </div>
+
         @if ($metadataFields->isEmpty())
             <p class="text-sm text-slate-500">
                 Aucun champ de métadonnées pour ce document — il n'a pas de type assigné, ou son
