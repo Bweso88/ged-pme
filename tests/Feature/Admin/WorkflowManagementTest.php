@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\WorkflowDefinition;
 use App\Models\WorkflowStep;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
@@ -116,5 +117,26 @@ class WorkflowManagementTest extends TestCase
 
         $this->assertNotNull(WorkflowStep::find($step->id));
         $this->assertSame($step->id, $document->currentWorkflowInstance()->etape_courante_id);
+    }
+
+    public function test_the_database_itself_refuses_to_orphan_an_active_instance(): void
+    {
+        // Vérifie la protection au niveau base de données, indépendamment du contrôle
+        // applicatif dans removeStep() : même en contournant celui-ci (accès direct au
+        // modèle, comme le ferait un bug futur), la contrainte SQL doit tenir.
+        Notification::fake();
+        $this->seedCatalog();
+        $company = $this->createCompany();
+        $author = $this->actingAsCompanyUser($company, Role::EMPLOYE);
+        $document = $this->makeDocument($company, $author);
+
+        $managerRole = Role::query()->whereNull('company_id')->where('code', Role::MANAGER)->firstOrFail();
+        $definition = WorkflowDefinition::query()->create(['nom' => 'Validation']);
+        $step = WorkflowStep::query()->create(['workflow_definition_id' => $definition->id, 'ordre' => 1, 'nom' => 'Manager', 'role_requis_id' => $managerRole->id]);
+
+        app(WorkflowService::class)->submit($document, $author);
+
+        $this->expectException(QueryException::class);
+        $step->delete();
     }
 }
