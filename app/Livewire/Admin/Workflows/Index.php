@@ -8,7 +8,9 @@ use App\Models\DocumentType;
 use App\Models\Role;
 use App\Models\WorkflowDefinition;
 use App\Models\WorkflowStep;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -25,6 +27,12 @@ class Index extends Component
     public string $stepNom = '';
 
     public string $stepRoleId = '';
+
+    public ?string $renamingWorkflowId = null;
+
+    public string $renameNom = '';
+
+    public string $renameDocumentTypeId = '';
 
     public function mount(): void
     {
@@ -46,6 +54,72 @@ class Index extends Component
     public function manageSteps(string $workflowId): void
     {
         $this->editingWorkflowId = $workflowId;
+    }
+
+    public function startRename(string $workflowId): void
+    {
+        $workflow = WorkflowDefinition::query()->findOrFail($workflowId);
+
+        $this->renamingWorkflowId = $workflow->id;
+        $this->renameNom = $workflow->nom;
+        $this->renameDocumentTypeId = (string) $workflow->document_type_id;
+    }
+
+    public function updateWorkflow(): void
+    {
+        $this->validate(['renameNom' => ['required', 'string', 'max:255']]);
+
+        $workflow = WorkflowDefinition::query()->findOrFail($this->renamingWorkflowId);
+        $workflow->forceFill([
+            'nom' => $this->renameNom,
+            'document_type_id' => $this->renameDocumentTypeId ?: null,
+        ])->save();
+
+        $this->reset(['renamingWorkflowId', 'renameNom', 'renameDocumentTypeId']);
+    }
+
+    public function toggleActive(string $workflowId): void
+    {
+        $workflow = WorkflowDefinition::query()->findOrFail($workflowId);
+        $workflow->forceFill(['actif' => ! $workflow->actif])->save();
+    }
+
+    public function deleteWorkflow(string $workflowId): void
+    {
+        $workflow = WorkflowDefinition::query()->findOrFail($workflowId);
+
+        try {
+            // DB::transaction() ouvre un savepoint : si le DELETE échoue (contrainte
+            // restrictOnDelete), seul ce savepoint est annulé et la requête suivante
+            // (le re-render du composant) reste utilisable, sans « poisoner » toute la
+            // transaction en cours au niveau PostgreSQL.
+            DB::transaction(fn () => $workflow->delete());
+        } catch (QueryException $exception) {
+            $this->addError(
+                'delete',
+                "Impossible de supprimer « {$workflow->nom} » : il a déjà été utilisé par au moins un document. Désactivez-le plutôt (bouton « Désactiver »).",
+            );
+
+            return;
+        }
+
+        if ($this->editingWorkflowId === $workflowId) {
+            $this->editingWorkflowId = null;
+        }
+    }
+
+    public function removeStep(string $stepId): void
+    {
+        $step = WorkflowStep::query()->findOrFail($stepId);
+
+        try {
+            DB::transaction(fn () => $step->delete());
+        } catch (QueryException $exception) {
+            $this->addError(
+                'delete',
+                "Impossible de supprimer l'étape « {$step->nom} » : elle a déjà été utilisée dans un circuit de validation.",
+            );
+        }
     }
 
     public function addStep(): void
