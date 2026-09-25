@@ -6,4 +6,16 @@
 @theme {
     --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Palette d'identité YOSEFA (violet/indigo) : cartes, sidebar active, graphiques. */
+    --color-brand-50: #f4f2fe;
+    --color-brand-100: #ebe7fd;
+    --color-brand-200: #d6cdfb;
+    --color-brand-300: #b7a6f7;
+    --color-brand-400: #9678f0;
+    --color-brand-500: #7c5cea;
+    --color-brand-600: #6c4de0;
+    --color-brand-700: #5a3cc7;
+    --color-brand-800: #4931a0;
+    --color-brand-900: #3b2a7d;
 }

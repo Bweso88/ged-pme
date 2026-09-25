@@ -1,9 +1,12 @@
 <div class="relative">
-    <button wire:click="toggle" class="relative inline-flex items-center rounded-md p-2 text-slate-500 hover:bg-slate-100">
-        <span>Notifications</span>
+    <button wire:click="toggle" class="relative inline-flex items-center justify-center rounded-full h-10 w-10 text-slate-500 hover:bg-slate-100">
+        <span class="sr-only">Notifications</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+            <path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 14.5 6 10.5Z" /><path d="M10 19a2 2 0 0 0 4 0" />
+        </svg>
         @if ($unreadCount > 0)
-            <span class="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-medium text-white">
-                {{ $unreadCount }}
+            <span class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-red-600 h-4 w-4 text-[10px] font-medium text-white">
+                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
             </span>
         @endif
     </button>
