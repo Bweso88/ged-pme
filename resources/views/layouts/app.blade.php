@@ -22,9 +22,13 @@
     @endphp
     <div class="min-h-screen flex">
         <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
-            <div class="px-5 py-5 flex items-center gap-3 border-b border-slate-100">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white font-bold">Y</span>
-                <span class="text-base font-semibold text-slate-900 truncate">{{ auth()->user()?->company?->nom ?? config('app.name') }}</span>
+            <div class="px-5 py-4 flex items-center gap-2.5 border-b border-slate-100">
+                <img src="{{ asset('images/yosefa-logo.png') }}" alt="YOSEFA" class="h-8 w-8 shrink-0 object-contain">
+                <span class="text-base font-bold tracking-tight text-brand-800 truncate">YOSEFA</span>
+            </div>
+            <div class="px-5 py-3 border-b border-slate-100">
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Espace entreprise</p>
+                <p class="text-sm font-medium text-slate-700 truncate">{{ auth()->user()?->company?->nom ?? '—' }}</p>
             </div>
             <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                 @foreach ($navItems as $item)
@@ -86,9 +90,10 @@
                     <h1 class="text-lg font-semibold text-slate-900">{{ $header ?? $pageTitle }}</h1>
                 </div>
                 <div class="flex items-center gap-3">
-                    <label class="hidden md:flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-400 focus-within:ring-1 focus-within:ring-brand-400">
-                        <x-icon name="search" class="h-4 w-4" />
-                        <input type="search" placeholder="Rechercher…" class="bg-transparent border-0 focus:ring-0 p-0 text-sm placeholder:text-slate-400" disabled>
+                    <label class="hidden md:flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-400 focus-within:ring-1 focus-within:ring-brand-400 w-80">
+                        <x-icon name="search" class="h-4 w-4 shrink-0" />
+                        <input type="search" placeholder="Rechercher un document, tag, référence…" class="bg-transparent border-0 focus:ring-0 p-0 text-sm placeholder:text-slate-400 w-full" disabled>
+                        <kbd class="hidden lg:inline text-[10px] font-medium text-slate-400 border border-slate-300 rounded px-1">Ctrl+K</kbd>
                     </label>
                     <livewire:notifications.bell />
                 </div>

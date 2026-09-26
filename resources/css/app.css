@@ -7,15 +7,25 @@
     --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* Palette d'identité YOSEFA (violet/indigo) : cartes, sidebar active, graphiques. */
-    --color-brand-50: #f4f2fe;
-    --color-brand-100: #ebe7fd;
-    --color-brand-200: #d6cdfb;
-    --color-brand-300: #b7a6f7;
-    --color-brand-400: #9678f0;
-    --color-brand-500: #7c5cea;
-    --color-brand-600: #6c4de0;
-    --color-brand-700: #5a3cc7;
-    --color-brand-800: #4931a0;
-    --color-brand-900: #3b2a7d;
+    /* Palette d'identité YOSEFA (bleu marine + orange, d'après le logo officiel) : cartes,
+       sidebar active, graphiques. */
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-200: #bfdbfe;
+    --color-brand-300: #93c5fd;
+    --color-brand-400: #60a5fa;
+    --color-brand-500: #3b82f6;
+    --color-brand-600: #2563eb;
+    --color-brand-700: #1d4ed8;
+    --color-brand-800: #1e3a8a;
+    --color-brand-900: #172554;
+
+    /* Accent orange du logo (triangle du "A", soulignement dégradé) : CTA secondaires,
+       badges de mise en avant. */
+    --color-accent-50: #fffbeb;
+    --color-accent-100: #fef3c7;
+    --color-accent-200: #fde68a;
+    --color-accent-500: #f59e0b;
+    --color-accent-600: #d97706;
+    --color-accent-700: #b45309;
 }

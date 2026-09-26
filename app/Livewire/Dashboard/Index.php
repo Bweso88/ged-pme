@@ -4,18 +4,31 @@ declare(strict_types=1);
 
 namespace App\Livewire\Dashboard;
 
+use App\Domain\Workflow\Services\WorkflowService;
 use App\Models\ArchiveRecord;
 use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\WorkflowInstance;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
+    /** Approuve directement depuis le tableau de bord (sans commentaire) — le rejet, qui exige
+     * un motif, reste sur la fiche document. */
+    public function approve(string $instanceId, WorkflowService $service): void
+    {
+        $instance = WorkflowInstance::query()->with('document')->findOrFail($instanceId);
+
+        Gate::authorize('validateWorkflow', $instance->document);
+
+        $service->approve($instance, Auth::user());
+    }
+
     public function render()
     {
         $user = Auth::user();
@@ -29,19 +42,30 @@ class Index extends Component
 
         $tachesEnAttente = $instancesEnCours->filter(fn (WorkflowInstance $i) => $i->etapeCourante?->canBeActedOnBy($user))->count();
 
+        $documentsParSemaine = $this->weeklyDocumentCounts();
+        $semaineActuelle = $documentsParSemaine[count($documentsParSemaine) - 1]['total'];
+        $semainePrecedente = $documentsParSemaine[count($documentsParSemaine) - 2]['total'];
+        $documentsDeltaPct = $semainePrecedente > 0
+            ? (int) round((($semaineActuelle - $semainePrecedente) / $semainePrecedente) * 100)
+            : null;
+
         return view('livewire.dashboard.index', [
             'totalDocuments' => Document::query()->count(),
+            'documentsDeltaPct' => $documentsDeltaPct,
             'recents' => Document::query()->orderByDesc('created_at')->limit(5)->get(),
             'recemmentModifies' => Document::query()->orderByDesc('updated_at')->limit(5)->get(),
             'enAttenteValidation' => WorkflowInstance::query()->where('statut', WorkflowInstance::STATUT_EN_COURS)->count(),
-            'instancesEnAttente' => $instancesEnCours->take(6),
+            'instancesEnAttente' => $instancesEnCours->take(6)->map(fn (WorkflowInstance $i) => [
+                'instance' => $i,
+                'peut_valider' => (bool) $i->etapeCourante?->canBeActedOnBy($user),
+            ]),
             'aArchiver' => Document::query()->where('statut', Document::STATUT_PUBLIE)->count(),
             'echeancesProches' => Document::query()->whereNotNull('date_expiration')->where('date_expiration', '<=', now()->addDays(90))->count(),
             'archivesActives' => ArchiveRecord::query()->where('statut', ArchiveRecord::STATUT_ACTIF)->count(),
             'propositionsDestruction' => ArchiveRecord::query()->where('statut', ArchiveRecord::STATUT_PROPOSE_DESTRUCTION)->count(),
             'tachesEnAttente' => $tachesEnAttente,
             'activiteRecente' => AuditLog::query()->with('utilisateur')->orderByDesc('created_at')->limit(6)->get(),
-            'documentsParSemaine' => $this->weeklyDocumentCounts(),
+            'documentsParSemaine' => $documentsParSemaine,
             'documentsParStatut' => $this->statusBreakdown(),
         ]);
     }
