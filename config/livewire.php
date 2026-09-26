@@ -129,7 +129,13 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => env('LIVEWIRE_TEMPORARY_FILE_UPLOAD_DISK'), // Example: 'local', 's3'             | Default: 'default'
+        // Toujours "local" par défaut, y compris quand FILESYSTEM_DISK pointe vers S3/R2 (Laravel
+        // Cloud) : le disque S3 de Livewire pour les fichiers TEMPORAIRES ne supporte pas la
+        // sélection multiple ("S3 temporary file upload driver only supports single file
+        // uploads"), alors que notre explorateur permet d'importer plusieurs fichiers à la fois.
+        // Le stockage définitif des documents (DocumentUploadService) est indépendant de ce
+        // réglage et continue de suivre GED_STORAGE_DISK.
+        'disk' => env('LIVEWIRE_TEMPORARY_FILE_UPLOAD_DISK', 'local'), // Example: 'local', 's3'    | Default: 'default'
         'rules' => null,                                      // Example: ['file', 'mimes:png,jpg'] | Default: ['required', 'file', 'max:12288'] (12MB)
         'directory' => null,                                  // Example: 'tmp'                     | Default: 'livewire-tmp'
         'middleware' => null,                                 // Example: 'throttle:5,1'            | Default: 'throttle:60,1'
