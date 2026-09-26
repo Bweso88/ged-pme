@@ -24,6 +24,10 @@ class DocumentSearchService
             $this->applyFullTextSearch($query, (string) $filters['q']);
         }
 
+        if (! empty($filters['folder_id'])) {
+            $query->where('folder_id', $filters['folder_id']);
+        }
+
         if (! empty($filters['document_type_id'])) {
             $query->where('document_type_id', $filters['document_type_id']);
         }

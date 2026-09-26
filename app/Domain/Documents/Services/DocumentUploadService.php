@@ -155,7 +155,7 @@ class DocumentUploadService
 
         if ($extension === '') {
             throw ValidationException::withMessages([
-                'file' => "Impossible de déterminer le type de ce fichier : renommez-le avec son extension (par exemple .pdf) puis réessayez.",
+                'file' => 'Impossible de déterminer le type de ce fichier : renommez-le avec son extension (par exemple .pdf) puis réessayez.',
             ]);
         }
 
