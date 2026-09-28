@@ -10,6 +10,7 @@ use App\Domain\Documents\Services\DocumentDiffService;
 use App\Domain\Documents\Services\DocumentUploadService;
 use App\Domain\Documents\Services\MetadataService;
 use App\Domain\Documents\Services\TrashService;
+use App\Domain\Documents\Support\PreviewSupport;
 use App\Domain\OnlyOffice\OnlyOfficeSupport;
 use App\Domain\Sharing\Services\ShareService;
 use App\Domain\Signature\Signataire;
@@ -355,6 +356,8 @@ class Show extends Component
             'signatureConfigured' => app(SignatureService::class)->isConfigured(),
             'signatureRequests' => $this->document->signatureRequests,
             'canEditOnline' => $this->canEditOnline(),
+            'canPreviewInline' => PreviewSupport::isPreviewable($this->document->versionCourante?->mime_type),
+            'previewMimeType' => $this->document->versionCourante?->mime_type,
         ]);
     }
 }

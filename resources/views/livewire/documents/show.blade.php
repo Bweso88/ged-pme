@@ -9,7 +9,9 @@
             </p>
         </div>
         <div class="flex gap-2">
-            <button wire:click="download" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Télécharger</button>
+            @can('download', $document)
+                <button wire:click="download" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Télécharger</button>
+            @endcan
             @if ($canEditOnline)
                 <a href="{{ route('documents.edit-online', $document) }}" class="rounded-md bg-white ring-1 ring-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">Éditer en ligne</a>
             @endif
@@ -24,6 +26,33 @@
     </div>
 
     @error('workflow') <p class="text-sm text-red-600 bg-red-50 rounded-md px-3 py-2">{{ $message }}</p> @enderror
+
+    <div class="rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">
+        @if ($canPreviewInline)
+            @if (str_starts_with($previewMimeType, 'image/'))
+                <img
+                    src="{{ route('documents.preview', $document) }}"
+                    alt="{{ $document->nom }}"
+                    class="mx-auto max-h-[70vh] w-auto object-contain"
+                >
+            @else
+                <iframe
+                    src="{{ route('documents.preview', $document) }}"
+                    title="Aperçu de {{ $document->nom }}"
+                    class="h-[70vh] w-full"
+                ></iframe>
+            @endif
+        @else
+            <p class="p-8 text-center text-sm text-slate-500">
+                Aperçu non disponible pour ce type de fichier.
+                @can('download', $document)
+                    Téléchargez-le pour le consulter.
+                @else
+                    Vous n'avez pas le droit de le télécharger — contactez une personne autorisée si vous devez le consulter dans un autre logiciel.
+                @endcan
+            </p>
+        @endif
+    </div>
 
     @if ($showArchiveForm)
         <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">

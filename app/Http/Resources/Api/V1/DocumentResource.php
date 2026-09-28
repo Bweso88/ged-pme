@@ -7,6 +7,7 @@ namespace App\Http\Resources\Api\V1;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 
 /** @mixin Document */
 class DocumentResource extends JsonResource
@@ -27,6 +28,7 @@ class DocumentResource extends JsonResource
                 'nom' => $this->auteur->name,
             ]),
             'version_courante' => $this->whenLoaded('versionCourante', fn () => $this->versionCourante === null ? null : new DocumentVersionResource($this->versionCourante)),
+            'peut_telecharger' => Gate::forUser($request->user())->allows('download', $this->resource),
             'date_document' => $this->date_document?->toDateString(),
             'date_expiration' => $this->date_expiration?->toDateString(),
             'created_at' => $this->created_at?->toIso8601String(),

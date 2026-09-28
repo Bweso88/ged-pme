@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\FolderController;
 use App\Http\Controllers\Api\V1\TaskController;
 use App\Http\Controllers\Api\V1\WorkflowController;
 use App\Http\Controllers\Documents\DownloadController;
+use App\Http\Controllers\Documents\PreviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->name('api.v1.auth.login');
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/documents', [DocumentController::class, 'store'])->name('api.v1.documents.store');
     Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('api.v1.documents.show');
     Route::get('/documents/{document}/download', DownloadController::class)->name('api.v1.documents.download');
+    Route::get('/documents/{document}/preview', PreviewController::class)->name('api.v1.documents.preview');
     Route::post('/documents/{document}/versions', [DocumentVersionController::class, 'store'])->name('api.v1.documents.versions.store');
 
     Route::post('/documents/{document}/workflow/submit', [WorkflowController::class, 'submit'])->name('api.v1.workflow.submit');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Documents\DownloadController;
+use App\Http\Controllers\Documents\PreviewController;
 use App\Http\Controllers\OnlyOffice\CallbackController as OnlyOfficeCallbackController;
 use App\Http\Controllers\OnlyOffice\ContentController as OnlyOfficeContentController;
 use App\Http\Controllers\OnlyOffice\EditorController as OnlyOfficeEditorController;
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/dossier/{folder}', Explorer::class)->name('documents.show-folder');
     Route::get('/documents/d/{document}', DocumentShow::class)->name('documents.show');
     Route::get('/documents/d/{document}/telecharger', DownloadController::class)->name('documents.download');
+    Route::get('/documents/d/{document}/apercu', PreviewController::class)->name('documents.preview');
     Route::get('/documents/d/{document}/editer-en-ligne', OnlyOfficeEditorController::class)->name('documents.edit-online');
 
     Route::get('/recherche', SearchIndex::class)->name('search');
