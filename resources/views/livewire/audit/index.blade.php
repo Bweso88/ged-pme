@@ -1,7 +1,7 @@
 <div>
     <select wire:model.live="action" class="mb-4 rounded-md border-slate-300 text-sm">
         <option value="">Toutes les actions</option>
-        @foreach (['connexion','deconnexion','creation','consultation','telechargement','modification','deplacement','partage','suppression','restauration','validation','archivage','changement_permission'] as $a)
+        @foreach (['connexion','deconnexion','creation','consultation','telechargement','modification','deplacement','partage','suppression','restauration','validation','archivage','changement_permission','capture_ecran'] as $a)
             <option value="{{ $a }}">{{ $a }}</option>
         @endforeach
     </select>

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\DocumentController;
+use App\Http\Controllers\Api\V1\DocumentScreenshotController;
 use App\Http\Controllers\Api\V1\DocumentTypeController;
 use App\Http\Controllers\Api\V1\DocumentVersionController;
 use App\Http\Controllers\Api\V1\FolderController;
@@ -29,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('api.v1.documents.show');
     Route::get('/documents/{document}/download', DownloadController::class)->name('api.v1.documents.download');
     Route::get('/documents/{document}/preview', PreviewController::class)->name('api.v1.documents.preview');
+    Route::post('/documents/{document}/screenshot', DocumentScreenshotController::class)->name('api.v1.documents.screenshot');
     Route::post('/documents/{document}/versions', [DocumentVersionController::class, 'store'])->name('api.v1.documents.versions.store');
 
     Route::post('/documents/{document}/workflow/submit', [WorkflowController::class, 'submit'])->name('api.v1.workflow.submit');

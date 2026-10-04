@@ -45,6 +45,13 @@ class AuditLog extends Model
 
     public const SIGNATURE = 'signature';
 
+    /**
+     * Capture d'écran détectée sur mobile — uniquement reportable depuis iOS, où aucune API
+     * ne permet de bloquer la capture (contrairement à Android, protégé par FLAG_SECURE en
+     * amont : la capture n'y aboutit jamais, donc rien n'est jamais reporté ici depuis Android).
+     */
+    public const CAPTURE_ECRAN = 'capture_ecran';
+
     public $timestamps = false;
 
     protected $fillable = ['company_id', 'utilisateur_id', 'action', 'ressource_type', 'ressource_id', 'ip_adresse', 'details'];
